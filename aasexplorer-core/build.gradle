@@ -1,0 +1,11 @@
+apply plugin: 'java'
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    testCompile 'junit:junit:4.12'
+    compile 'org.jsoup:jsoup:1.10.3'
+    testCompile 'org.mockito:mockito-core:2.11.0'
+}
+
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"

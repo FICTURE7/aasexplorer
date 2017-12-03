@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">A/AS Explorer</string>
+    <string name="_">string</string>
+
+    <string name="title_error">Error</string>
+    <string name="subtitle_error">Error occurred.</string>
+
+    <string name="action_retry">Retry</string>
+</resources>

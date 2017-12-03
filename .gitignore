@@ -1,0 +1,24 @@
+.DS_Store
+
+# VSCode
+.vs/
+
+# Builds
+/build
+
+# Java class files
+*.class
+
+# Gradle & Android Studio
+*.iml
+.gradle/
+.idea/
+
+# Local configurations
+local.properties
+
+
+#/.idea/workspace.xml
+#/.idea/libraries
+#/captures
+#.externalNativeBuild
