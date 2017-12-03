@@ -41,9 +41,9 @@ public class SubjectRepository implements Repository<Integer, Subject> {
      * @param examination {@link Examination} instance.
      * @param loader      {@link Loader} instance.
      * @param saver       {@link Saver} instance.
-     * @throws IllegalArgumentException {@code examination} is null.
-     * @throws IllegalArgumentException {@code loader} is null.
-     * @throws IllegalArgumentException {@code saver} is null.
+     * @throws NullPointerException {@code examination} is null.
+     * @throws NullPointerException {@code loader} is null.
+     * @throws NullPointerException {@code saver} is null.
      */
     public SubjectRepository(Examination examination, Loader loader, Saver saver) {
         this.examination = checkNotNull(examination, "examination");
@@ -70,7 +70,7 @@ public class SubjectRepository implements Repository<Integer, Subject> {
      * Puts the specified {@link Subject} instance to the {@link SubjectRepository}.
      *
      * @param subject {@link Subject} instance.
-     * @throws IllegalArgumentException {@code subject} is null.
+     * @throws NullPointerException {@code subject} is null.
      */
     public void put(Subject subject) {
         checkNotNull(subject, "subject");
