@@ -24,6 +24,7 @@ public class SubjectRepository implements Repository<Integer, Subject> {
 
     private boolean isLoaded;
 
+    private final Subject.Factory factory;
     private final Examination examination;
     private final Class<? extends Examination> examinationClass;
 
@@ -50,6 +51,7 @@ public class SubjectRepository implements Repository<Integer, Subject> {
         this.saver = checkNotNull(saver, "saver");
 
         subjects = new HashMap<>();
+        factory = new Subject.Factory(examination, loader, saver);
         examinationClass = examination.getClass();
     }
 
@@ -106,7 +108,7 @@ public class SubjectRepository implements Repository<Integer, Subject> {
             if (subject != null) {
                 subject.sources().add(source);
             } else {
-                subject = new Subject(examination, loader, saver, source.id(), source.name());
+                subject = factory.create(source.id(), source.name());
                 subject.sources().add(source);
 
                 put(subject);
