@@ -4,8 +4,6 @@ import com.ficture7.aasexplorer.Loader;
 import com.ficture7.aasexplorer.Saver;
 import com.ficture7.aasexplorer.model.examination.Examination;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 import static com.ficture7.aasexplorer.util.ObjectUtil.checkNotNull;
@@ -140,8 +138,10 @@ public class Subject {
          * @param id Subject ID/code.
          * @param name Subject name.
          * @return {@link Subject} instance.
+         * @throws NullPointerException {@code name} is null.
          */
         public Subject create(int id, String name) {
+            checkNotNull(name, "name");
             return new Subject(examination, loader, saver, id, name);
         }
     }
