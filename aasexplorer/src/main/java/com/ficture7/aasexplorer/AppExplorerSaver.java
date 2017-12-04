@@ -38,7 +38,7 @@ public class AppExplorerSaver extends ExplorerSaver {
     public class SaveSubjectsAsyncTask extends AsyncTask<Void, Void, Void> {
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected Void doInBackground(Void... args) {
             try {
                 explorer().alevel().subjects().save();
             } catch (Exception e) {
@@ -57,7 +57,7 @@ public class AppExplorerSaver extends ExplorerSaver {
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected Void doInBackground(Void... args) {
             try {
                 subject.resources().save();
             } catch (Exception e) {

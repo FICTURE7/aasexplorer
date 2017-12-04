@@ -69,8 +69,7 @@ public class App extends Application {
                     .withExamination(ALevelExamination.class)
                     .build();
         } catch (ExplorerBuilderException e) {
-            //TODO: More graceful, if somehow it happens, because it should not.
-            throw new RuntimeException(e);
+            throw new RuntimeException("Unexpected exception while building Explorer instance.", e);
         }
 
         // Start loading the subjects on a separate thread immediately when
