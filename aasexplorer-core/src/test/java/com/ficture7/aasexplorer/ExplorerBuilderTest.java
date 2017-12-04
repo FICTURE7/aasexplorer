@@ -153,7 +153,7 @@ public class ExplorerBuilderTest {
         }
 
         @Override
-        public <T extends Examination> Iterable<ResourceSource> loadResources(Class<T> examinationClass, Subject subject) throws Exception {
+        public Iterable<ResourceSource> loadResources(Subject subject) throws Exception {
             return null;
         }
     }
@@ -182,7 +182,7 @@ public class ExplorerBuilderTest {
         }
 
         @Override
-        public <T extends Examination> Iterable<ResourceSource> loadResources(Class<T> examinationClass, Subject subject) throws Exception {
+        public Iterable<ResourceSource> loadResources(Subject subject) throws Exception {
             return null;
         }
     }

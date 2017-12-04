@@ -24,7 +24,7 @@ public class Subject {
     // List of sources.
     private final Source.List<SubjectSource> sources;
 
-    final Class<? extends Examination> examinationClass;
+    private final Examination examination;
 
     /**
      * Constructs a new instance of the {@link Subject} class with the specified {@link Examination},
@@ -39,10 +39,10 @@ public class Subject {
      * @throws NullPointerException {@code examination} is null.
      */
     Subject(Examination examination, Loader loader, Saver saver, int id, String name) {
+        this.examination = checkNotNull(examination, "examination");
         this.name = checkNotNull(name, "name");
         this.id = id;
 
-        examinationClass = checkNotNull(examination, "examination").getClass();
         resources = new ResourceRepository(this, examination, loader, saver);
         sources = new Source.List<>();
     }
@@ -81,6 +81,15 @@ public class Subject {
      */
     public ResourceRepository resources() {
         return resources;
+    }
+
+    /**
+     * Returns the {@link Examination} of the {@link Subject}.
+     *
+     * @return {@link Examination} of the {@link Subject}.
+     */
+    public Examination examination() {
+        return examination;
     }
 
     /**

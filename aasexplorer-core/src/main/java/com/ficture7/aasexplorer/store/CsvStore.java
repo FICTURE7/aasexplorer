@@ -145,7 +145,7 @@ public class CsvStore extends Store {
     }
 
     @Override
-    public <T extends Examination> Iterable<ResourceSource> loadResources(Class<T> examinationClass, Subject subject) throws Exception {
+    public Iterable<ResourceSource> loadResources(Subject subject) throws Exception {
         if (!resourcesFile.exists()) {
             return null;
         }
@@ -167,7 +167,7 @@ public class CsvStore extends Store {
                 Date date = new Date(Long.parseLong(columns[4]));
                 URI uri = URI.create(columns[5]);
 
-                if (examinationClass.getName().equals(examination) && id == subject.id()) {
+                if (subject.examination().getClass().getName().equals(examination) && id == subject.id()) {
                     ResourceSource source = new ResourceSource(client, name, date, uri);
                     sources.add(source);
                 }

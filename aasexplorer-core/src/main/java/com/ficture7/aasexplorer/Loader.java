@@ -18,12 +18,17 @@ public interface Loader {
      *
      * @param examinationClass {@link Examination} class.
      * @param <T> Type of {@link Examination}.
-     * @return Loaded {@link SubjectSource}; can return null under certain circumstances.
-     * @throws Exception Exception raised when loading the {@link SubjectSource}s.
+     * @return {@link SubjectSource}s; can return null under certain circumstances.
+     * @throws Exception Exception when loading the {@link SubjectSource}s.
      */
     <T extends Examination> Iterable<SubjectSource> loadSubjects(Class<T> examinationClass) throws Exception;
 
-    //TODO: Simplify the loadResources parameters since subject already has the examinationClass.
-
-    <T extends Examination> Iterable<ResourceSource> loadResources(Class<T> examinationClass, Subject subject) throws Exception;
+    /**
+     * Loads the {@link ResourceSource}s for the specified {@link Subject} instance.
+     *
+     * @param subject {@link Subject} instance.
+     * @return {@link ResourceSource}s; can return null under certain circumstances.
+     * @throws Exception Exception  when loading the {@link ResourceSource}s.
+     */
+    Iterable<ResourceSource> loadResources(Subject subject) throws Exception;
 }

@@ -92,15 +92,14 @@ public class ExplorerLoader implements Loader {
     }
 
     @Override
-    public <T extends Examination> Iterable<ResourceSource> loadResources(Class<T> examinationClass, Subject subject) throws Exception {
-        checkNotNull(examinationClass, "examinationClass");
+    public Iterable<ResourceSource> loadResources(Subject subject) throws Exception {
         checkNotNull(subject, "subject");
 
         // Try to load from disk first.
-        Iterable<ResourceSource> sources = loadResourcesFromStore(examinationClass, subject);
+        Iterable<ResourceSource> sources = loadResourcesFromStore(subject);
         if (sources == null) {
             // Load from the internet if we can't for some reason.
-            sources = loadResourcesFromClients(examinationClass, subject);
+            sources = loadResourcesFromClients(subject);
         }
         return sources;
     }
@@ -130,7 +129,7 @@ public class ExplorerLoader implements Loader {
         return getExplorer().store().loadSubjects(examinationClass);
     }
 
-    protected <T extends Examination> Iterable<ResourceSource> loadResourcesFromClients(Class<T> examinationClass, Subject subject) throws Exception {
+    protected Iterable<ResourceSource> loadResourcesFromClients(Subject subject) throws Exception {
         // Merge the result from the different clients into a single iterable.
         List<ResourceSource> sources = new ArrayList<>(64);
         Iterable<SubjectSource> subjectSources = subject.sources();
@@ -154,9 +153,9 @@ public class ExplorerLoader implements Loader {
         return sources;
     }
 
-    protected <T extends Examination> Iterable<ResourceSource> loadResourcesFromStore(Class<T> examinationClass, Subject subject) throws Exception {
+    protected Iterable<ResourceSource> loadResourcesFromStore(Subject subject) throws Exception {
         Iterator<ResourceSource> iterator;
-        Iterable<ResourceSource> sources = getExplorer().store().loadResources(examinationClass, subject);
+        Iterable<ResourceSource> sources = getExplorer().store().loadResources(subject);
         if (sources == null) {
             return null;
         }

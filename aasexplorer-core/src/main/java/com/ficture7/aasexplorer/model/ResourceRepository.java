@@ -160,7 +160,7 @@ public class ResourceRepository implements Repository<String, Resource>, Iterabl
     public void load() throws Exception {
         unload();
 
-        Iterable<ResourceSource> sources = loader.loadResources(examinationClass, subject);
+        Iterable<ResourceSource> sources = loader.loadResources(subject);
 
         for (ResourceSource source : sources) {
             Resource resource = get(source.name());
