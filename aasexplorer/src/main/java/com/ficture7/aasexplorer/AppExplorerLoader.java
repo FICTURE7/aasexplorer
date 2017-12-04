@@ -97,8 +97,6 @@ public class AppExplorerLoader extends ExplorerLoader {
     public <T extends Examination> Iterable<SubjectSource> loadSubjects(Class<T> examinationClass) throws Exception {
         Iterable<SubjectSource> sources =  super.loadSubjects(examinationClass);
 
-        App.getInstance().getEventBus().post("");
-
         // Check if we're running inside the doInBackground method (kinda).
         // If yes, we don't push an update to the UI yet.
         if (getLoadSubjectsAsyncTask().workerThread != Thread.currentThread()) {

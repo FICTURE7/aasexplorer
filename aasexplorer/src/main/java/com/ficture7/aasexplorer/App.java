@@ -26,10 +26,6 @@ public class App extends Application {
         return explorerSaver;
     }
 
-    public EventBus getEventBus() {
-        return null;
-    }
-
     public static App getInstance() {
         return instance;
     }
