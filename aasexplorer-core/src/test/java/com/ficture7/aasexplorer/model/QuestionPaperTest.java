@@ -8,7 +8,7 @@ public class QuestionPaperTest {
 
     @Test(expected = NullPointerException.class)
     public void ctor_sessionNull_throwsException() {
-        new MarkingScheme("A", null);
+        new QuestionPaper("A", null);
     }
 
     @Test

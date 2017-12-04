@@ -1,5 +1,7 @@
 package com.ficture7.aasexplorer.model;
 
+import static com.ficture7.aasexplorer.util.ObjectUtil.checkNotNull;
+
 /**
  * Represents a question paper resource.
  *
@@ -21,7 +23,7 @@ public class QuestionPaper extends Resource {
     public QuestionPaper(String name, Session session) {
         super(name);
 
-        this.session = session;
+        this.session = checkNotNull(session, "session");
     }
 
     /**
