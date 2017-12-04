@@ -4,7 +4,6 @@ import com.ficture7.aasexplorer.model.ResourceSource;
 import com.ficture7.aasexplorer.model.SubjectSource;
 import com.ficture7.aasexplorer.model.examination.ALevelExamination;
 import com.ficture7.aasexplorer.model.examination.MockExamination;
-import com.ficture7.aasexplorer.model.examination.OLevelExamination;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,18 +11,15 @@ import org.junit.Test;
 import java.net.URI;
 import java.util.Date;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
+import static org.junit.Assert.*;
 
-public class GceGuideClientTest {
+public class XtremePapersClientTest {
 
-    private GceGuideClient client;
+    private XtremePapersClient client;
 
     @Before
     public void setUp() {
-        client = new GceGuideClient();
+        client = new XtremePapersClient();
     }
 
     @Test(expected = NullPointerException.class)
@@ -39,18 +35,12 @@ public class GceGuideClientTest {
     }
 
     @Test
-    public void getSubjects__OLevelExamination_examinationClass__returns_subjects() throws ParseException, DownloadException {
-        Iterable<SubjectSource> sources = client.getSubjects(OLevelExamination.class);
-
-        assertNotNull(sources);
-    }
-
-    @Test
     public void getSubjects__unknown_examinationClass__returns_null() throws ParseException, DownloadException {
         Iterable<SubjectSource> sources = client.getSubjects(MockExamination.class);
 
         assertNull(sources);
     }
+
 
     @Test(expected = NullPointerException.class)
     public void getResources__null_subjectSource__throwsException() throws ParseException, DownloadException {
@@ -63,7 +53,7 @@ public class GceGuideClientTest {
                                                  9702,
                                                  "Physics",
                                                  new Date(),
-                                                 URI.create("http://papers.gceguide.xyz/A%20Levels/Physics%20%289702%29/"));
+                                                 URI.create("http://papers.xtremepapers.com/CIE/Cambridge%20International%20A%20and%20AS%20Level/Physics%20%289702%29/"));
         Iterable<ResourceSource> sources = client.getResources(source);
 
         assertNotNull(sources);
@@ -76,7 +66,7 @@ public class GceGuideClientTest {
 
     @Test
     public void parseTable__passes_parsed_values_to_Processor() throws DownloadException, ParseException {
-        client.parse(client.get(GceGuideClient.ALEVEL_ROOT_URI), new HttpClient.Processor() {
+        client.parse(client.get(XtremePapersClient.ALEVEL_ROOT_URI), new HttpClient.Processor() {
             @Override
             public void process(String name, String url) {
                 assertNotNull(name);

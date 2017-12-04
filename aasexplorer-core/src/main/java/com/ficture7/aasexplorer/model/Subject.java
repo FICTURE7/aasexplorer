@@ -23,7 +23,7 @@ public class Subject {
     private final ResourceRepository resources;
     // List of sources.
     private final Source.List<SubjectSource> sources;
-
+    // Examination instance which owns this Subject instance.
     private final Examination examination;
 
     /**
