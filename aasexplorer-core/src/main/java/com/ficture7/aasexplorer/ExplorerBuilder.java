@@ -5,7 +5,6 @@ import com.ficture7.aasexplorer.model.examination.Examination;
 import com.ficture7.aasexplorer.store.Store;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 

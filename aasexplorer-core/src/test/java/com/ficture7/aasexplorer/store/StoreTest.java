@@ -14,7 +14,9 @@ import com.ficture7.aasexplorer.model.examination.Examination;
 import org.hamcrest.core.IsInstanceOf;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 
 public class StoreTest {

@@ -3,7 +3,6 @@ package com.ficture7.aasexplorer;
 import com.ficture7.aasexplorer.client.GceGuideClient;
 import com.ficture7.aasexplorer.model.Subject;
 import com.ficture7.aasexplorer.model.examination.ALevelExamination;
-import com.ficture7.aasexplorer.model.examination.Examination;
 import com.ficture7.aasexplorer.model.examination.OLevelExamination;
 import com.ficture7.aasexplorer.store.CsvStore;
 

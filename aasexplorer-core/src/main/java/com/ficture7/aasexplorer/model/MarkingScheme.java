@@ -1,7 +1,5 @@
 package com.ficture7.aasexplorer.model;
 
-import com.ficture7.aasexplorer.util.ObjectUtil;
-
 import static com.ficture7.aasexplorer.util.ObjectUtil.checkNotNull;
 
 /**

@@ -3,7 +3,6 @@ package com.ficture7.aasexplorer.model;
 import com.ficture7.aasexplorer.Loader;
 import com.ficture7.aasexplorer.Saver;
 import com.ficture7.aasexplorer.model.examination.Examination;
-import com.ficture7.aasexplorer.util.ObjectUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;

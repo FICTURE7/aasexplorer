@@ -1,7 +1,6 @@
 package com.ficture7.aasexplorer.model;
 
 import com.ficture7.aasexplorer.client.Client;
-import com.ficture7.aasexplorer.util.ObjectUtil;
 
 import java.net.URI;
 import java.util.Date;

@@ -5,7 +5,7 @@ import com.ficture7.aasexplorer.Saver;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 
 public class OLevelExaminationTest {
