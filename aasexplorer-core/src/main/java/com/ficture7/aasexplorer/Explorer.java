@@ -138,20 +138,6 @@ public class Explorer {
         return examinations.get(OLevelExamination.class);
     }
 
-    private static String getFailedToCreateInstanceMessage(Class<?> c, Class<?>[] ctor) {
-        String message = "Failed to create instance of %s. Check if %s has a public constructor %s.";
-        String ctorMessage = "(";
-        for (int i = 0; i < ctor.length; i++) {
-            ctorMessage += ctor[i].getSimpleName();
-            if (i != ctor.length - 1) {
-                ctorMessage += ", ";
-            }
-        }
-        ctorMessage += ")";
-
-        return String.format(Locale.US, message, c.getName(), c.getName(), ctorMessage);
-    }
-
     /**
      * Represents a collection of {@link Examination}.
      *
