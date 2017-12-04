@@ -62,10 +62,12 @@ public class BookmarkListActivity extends ListActivity {
     @Override
     protected void onListItemClick(ListView listView, View view, int position, long id) {
         Subject subject = adapter.getItem(position);
-        Intent intent = new Intent(this, SubjectActivity.class);
-        intent.putExtra("SUBJECT_ID", subject.id());
+        if (subject != null) {
+            Intent intent = new Intent(this, SubjectActivity.class);
+            intent.putExtra("SUBJECT_ID", subject.id());
 
-        startActivity(intent);
+            startActivity(intent);
+        }
     }
 
     // Adds the specified subjects to the list of the activity.
