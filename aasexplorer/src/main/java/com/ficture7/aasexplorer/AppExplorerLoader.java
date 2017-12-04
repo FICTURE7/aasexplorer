@@ -110,8 +110,8 @@ public class AppExplorerLoader extends ExplorerLoader {
     }
 
     @Override
-    public <T extends Examination> Iterable<ResourceSource> loadResources(Class<T> examinationClass, Subject subject) throws Exception {
-        Iterable<ResourceSource> sources =  super.loadResources(examinationClass, subject);
+    public Iterable<ResourceSource> loadResources(Subject subject) throws Exception {
+        Iterable<ResourceSource> sources =  super.loadResources(subject);
 
         // Check if we're running inside the doInBackground method (kinda).
         // If yes, we don't push an update to the UI yet.
@@ -142,15 +142,15 @@ public class AppExplorerLoader extends ExplorerLoader {
     }
 
     @Override
-    protected <T extends Examination> Iterable<ResourceSource> loadResourcesFromStore(Class<T> examinationClass, Subject subject) throws Exception {
+    protected Iterable<ResourceSource> loadResourcesFromStore(Subject subject) throws Exception {
         setStatus(Status.LOADING_RESOURCES_FROM_STORE);
-        return super.loadResourcesFromStore(examinationClass, subject);
+        return super.loadResourcesFromStore(subject);
     }
 
     @Override
-    protected <T extends Examination> Iterable<ResourceSource> loadResourcesFromClients(Class<T> examinationClass, Subject subject) throws Exception {
+    protected Iterable<ResourceSource> loadResourcesFromClients(Subject subject) throws Exception {
         setStatus(Status.LOADING_RESOURCES_FROM_CLIENTS);
-        Iterable<ResourceSource> sources = super.loadResourcesFromClients(examinationClass, subject);
+        Iterable<ResourceSource> sources = super.loadResourcesFromClients(subject);
 
         // If auto-save is enabled we starting saving the newly retrieved sources.
         if (sources != null && getAutoSave()) {

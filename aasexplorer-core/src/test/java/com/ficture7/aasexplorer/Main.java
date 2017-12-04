@@ -1,6 +1,7 @@
 package com.ficture7.aasexplorer;
 
 import com.ficture7.aasexplorer.client.GceGuideClient;
+import com.ficture7.aasexplorer.client.XtremePapersClient;
 import com.ficture7.aasexplorer.model.Subject;
 import com.ficture7.aasexplorer.model.examination.ALevelExamination;
 import com.ficture7.aasexplorer.model.examination.OLevelExamination;
@@ -19,6 +20,7 @@ public class Main {
                 .useLoader(ExplorerLoader.class)
                 .useSaver(ExplorerSaver.class)
                 .withClient(GceGuideClient.class)
+                .withClient(XtremePapersClient.class)
                 .withExamination(ALevelExamination.class)
                 .withExamination(OLevelExamination.class)
                 .build();
