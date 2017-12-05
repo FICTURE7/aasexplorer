@@ -4,11 +4,14 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ficture7.aasexplorer.App;
 import com.ficture7.aasexplorer.AppExplorerLoader;
@@ -32,6 +35,12 @@ public class BookmarkListActivity extends ListActivity {
         setListAdapter(adapter);
 
         loaderView = findViewById(R.id.view_loader);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_bookmarks, menu);
+        return true;
     }
 
     @Override
@@ -60,6 +69,24 @@ public class BookmarkListActivity extends ListActivity {
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.menu_add:
+                if (App.getInstance().getExplorer().alevel().subjects().isLoaded()) {
+                    Intent intent = new Intent(this, EditBookmarkListActivity.class);
+                    startActivity(intent);
+                    return true;
+                } else {
+                    Toast.makeText(this, "Subjects not loaded yet.", Toast.LENGTH_LONG).show();
+                    return false;
+                }
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
     protected void onListItemClick(ListView listView, View view, int position, long id) {
         Subject subject = adapter.getItem(position);
         if (subject != null) {
@@ -70,11 +97,14 @@ public class BookmarkListActivity extends ListActivity {
         }
     }
 
-    // Adds the specified subjects to the list of the activity.
+    // Adds the specified subjects to the list of the activity
+    // filtering out subjects which are not bookmarked.
     private void updateList(Iterable<Subject> subjects) {
         adapter.clear();
         for (Subject subject : subjects) {
-            adapter.add(subject);
+            if (App.getInstance().getBookmarks().contains(subject)) {
+                adapter.add(subject);
+            }
         }
     }
 

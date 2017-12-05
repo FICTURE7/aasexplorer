@@ -37,6 +37,8 @@ public class AppExplorerLoader extends ExplorerLoader {
         updateLoaderViewRunnable = new UpdateLoaderViewRunnable();
     }
 
+    //TODO: Do all calls to setStatus in loadSubjects & loadResources method.
+
     public Status getStatus() {
         return status;
     }

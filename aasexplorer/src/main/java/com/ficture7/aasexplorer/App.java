@@ -10,6 +10,7 @@ public class App extends Application {
 
     private static App instance;
 
+    private Bookmarks bookmarks;
     private Explorer explorer;
     private AppExplorerLoader explorerLoader;
     private AppExplorerSaver explorerSaver;
@@ -24,6 +25,10 @@ public class App extends Application {
 
     public AppExplorerSaver getSaver() {
         return explorerSaver;
+    }
+
+    public Bookmarks getBookmarks() {
+        return bookmarks;
     }
 
     public static App getInstance() {
@@ -67,6 +72,9 @@ public class App extends Application {
         } catch (ExplorerBuilderException e) {
             throw new RuntimeException("Unexpected exception while building Explorer instance.", e);
         }
+
+        // Load bookmark values.
+        bookmarks = new Bookmarks(getApplicationContext());
 
         // Start loading the subjects on a separate thread immediately when
         // the application is created.

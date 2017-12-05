@@ -6,4 +6,5 @@
     <string name="subtitle_error">Error occurred.</string>
 
     <string name="action_retry">Retry</string>
+    <string name="action_edit_bookmarks">Edit Bookmarks</string>
 </resources>
