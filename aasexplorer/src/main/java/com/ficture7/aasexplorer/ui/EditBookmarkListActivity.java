@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Context;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -38,6 +39,26 @@ public class EditBookmarkListActivity extends ListActivity {
 
         Explorer explorer = App.getInstance().getExplorer();
         updateList(explorer.alevel().subjects());
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // Save the bookmarks once the user is done editing them.
+        App.getInstance().getBookmarks().save();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     // Adds the specified subjects to the list of the activity.
