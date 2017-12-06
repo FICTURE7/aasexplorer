@@ -4,12 +4,14 @@ import android.app.ActionBar;
 import android.app.ListActivity;
 import android.content.Context;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.ficture7.aasexplorer.App;
@@ -38,6 +40,41 @@ public class EditBookmarkListActivity extends ListActivity {
 
         Explorer explorer = App.getInstance().getExplorer();
         updateList(explorer.alevel().subjects());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_edit_bookmarks, menu);
+
+        SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        searchView.setQueryHint("Search...");
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+             @Override
+            public boolean onQueryTextSubmit(String query) {
+                searchAndUpdate(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newQuery) {
+                searchAndUpdate(newQuery);
+                return false;
+            }
+
+            private void searchAndUpdate(String query) {
+                adapter.clear();
+                Iterable<Subject> subjects = App.getInstance().getExplorer().alevel().subjects();
+                for (Subject subject : subjects) {
+                    String id = String.valueOf(subject.id());
+                    String name = subject.name().toLowerCase();
+
+                    if (id.contains(query) || name.contains(query)) {
+                        adapter.add(subject);
+                    }
+                }
+            }
+        });
+        return true;
     }
 
     @Override

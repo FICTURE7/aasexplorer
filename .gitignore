@@ -13,6 +13,7 @@
 *.iml
 .gradle/
 .idea/
+captures/
 
 # Local configurations
 local.properties

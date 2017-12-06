@@ -7,4 +7,5 @@
 
     <string name="action_retry">Retry</string>
     <string name="action_edit_bookmarks">Edit Bookmarks</string>
+    <string name="action_search_subjects">Search Subjects</string>
 </resources>
