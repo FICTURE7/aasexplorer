@@ -31,8 +31,8 @@ public class ErrorView extends LinearLayout {
         String subtitle = null;
 
         try {
-            title = res.getString(R.styleable.ErrorView_title);
-            subtitle = res.getString(R.styleable.ErrorView_subtitle);
+            title = res.getString(R.styleable.ErrorView_ev_title);
+            subtitle = res.getString(R.styleable.ErrorView_ev_subtitle);
         } finally {
             res.recycle();
         }

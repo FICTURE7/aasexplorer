@@ -25,7 +25,7 @@ public class ProgressView extends LinearLayout {
         String message = null;
 
         try {
-            message = res.getString(R.styleable.ProgressView_message);
+            message = res.getString(R.styleable.ProgressView_pv_message);
         } finally {
             res.recycle();
         }
