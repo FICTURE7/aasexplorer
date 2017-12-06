@@ -68,6 +68,8 @@ public class CsvStore extends Store {
         resourcesFile = new File(name + "-resources.csv");
     }
 
+    //TODO: Optimize by doing manual reading and stuff.
+
     @Override
     public <T extends Examination> void saveSubjects(Class<T> examinationClass, Iterable<SubjectSource> subjectSources) throws Exception {
         FileWriter fileWriter = new FileWriter(subjectsFile);
@@ -123,8 +125,6 @@ public class CsvStore extends Store {
             while ((line = bufferedReader.readLine()) != null) {
                 String[] columns = line.split(",");
 
-                //TODO: Optimize by doing manual reading and stuff.
-
                 String examination = columns[0];
                 Client client = getClient(columns[1]);
                 int id = Integer.parseInt(columns[2]);
@@ -157,8 +157,6 @@ public class CsvStore extends Store {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
                 String[] columns = line.split(",");
-
-                //TODO: Optimize by doing manual reading and stuff.
 
                 String examination = columns[0];
                 Client client = getClient(columns[1]);
