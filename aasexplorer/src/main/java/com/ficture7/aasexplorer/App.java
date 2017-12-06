@@ -51,7 +51,7 @@ public class App extends Application {
                         @Override
                         public void init(CsvStore instance) {
                             // Configure the store to use the internal storage of the device.
-                            String path = getApplicationContext().getFilesDir().getAbsolutePath() + "data";
+                            String path = getApplicationContext().getFilesDir().getAbsolutePath() + "/data";
 
                             instance.configure(path);
                         }
