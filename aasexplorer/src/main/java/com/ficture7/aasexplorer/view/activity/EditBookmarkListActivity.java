@@ -1,7 +1,6 @@
-package com.ficture7.aasexplorer.ui;
+package com.ficture7.aasexplorer.view.activity;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Context;
 import android.os.Bundle;

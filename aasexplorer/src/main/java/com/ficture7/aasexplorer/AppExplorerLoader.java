@@ -10,7 +10,8 @@ import com.ficture7.aasexplorer.model.ResourceSource;
 import com.ficture7.aasexplorer.model.Subject;
 import com.ficture7.aasexplorer.model.SubjectSource;
 import com.ficture7.aasexplorer.model.examination.Examination;
-import com.ficture7.aasexplorer.ui.view.LoaderView;
+import com.ficture7.aasexplorer.util.LooperUtil;
+import com.ficture7.aasexplorer.view.LoaderView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -80,18 +81,17 @@ public class AppExplorerLoader extends ExplorerLoader {
             loadSubjectsAsyncTask = new LoadSubjectsAsyncTask();
         }
 
-        //TODO: Create new async tasks when the previous one has completed.
         return loadSubjectsAsyncTask;
     }
 
     public LoadResourcesAsyncTask getLoadResourcesAsyncTask(Subject subject) {
+        // Look up if we already have a load resource task for this subject.
         LoadResourcesAsyncTask task = loadResourcesAsyncTaskMap.get(subject);
         if (task == null) {
             task = new LoadResourcesAsyncTask(subject);
             loadResourcesAsyncTaskMap.put(subject, task);
         }
 
-        //TODO: Create new async tasks when the previous one has completed.
         return task;
     }
 
@@ -168,12 +168,7 @@ public class AppExplorerLoader extends ExplorerLoader {
         }
 
         // Make sure we run the code on the UI thread.
-        boolean inUiThread = Looper.getMainLooper() == Looper.myLooper();
-        if (inUiThread) {
-            updateLoaderViewRunnable.run();
-        } else {
-            loaderView.post(updateLoaderViewRunnable);
-        }
+        LooperUtil.runOnUiThread(updateLoaderViewRunnable);
     }
 
     public enum Status {

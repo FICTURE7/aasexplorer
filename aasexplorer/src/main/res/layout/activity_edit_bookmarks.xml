@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.ficture7.aasexplorer.ui.EditBookmarkListActivity">
+    tools:context="com.ficture7.aasexplorer.view.activity.EditBookmarkListActivity">
 
     <ListView
         android:id="@android:id/list"

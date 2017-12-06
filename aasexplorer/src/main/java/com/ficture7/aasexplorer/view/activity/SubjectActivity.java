@@ -1,4 +1,4 @@
-package com.ficture7.aasexplorer.ui;
+package com.ficture7.aasexplorer.view.activity;
 
 import android.app.ActionBar;
 import android.app.ListActivity;
@@ -13,7 +13,7 @@ import com.ficture7.aasexplorer.AppExplorerLoader;
 import com.ficture7.aasexplorer.Explorer;
 import com.ficture7.aasexplorer.R;
 import com.ficture7.aasexplorer.model.Subject;
-import com.ficture7.aasexplorer.ui.view.LoaderView;
+import com.ficture7.aasexplorer.view.LoaderView;
 
 public class SubjectActivity extends ListActivity {
 
@@ -53,7 +53,6 @@ public class SubjectActivity extends ListActivity {
 
         LoaderView loaderView = findViewById(R.id.view_loader);
         loader.setLoaderView(loaderView);
-
     }
 
     @Override

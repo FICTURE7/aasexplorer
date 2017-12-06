@@ -1,4 +1,4 @@
-package com.ficture7.aasexplorer.ui;
+package com.ficture7.aasexplorer.view.activity;
 
 import android.app.DownloadManager;
 import android.app.ListActivity;

@@ -1,4 +1,4 @@
-package com.ficture7.aasexplorer.ui.view;
+package com.ficture7.aasexplorer.view;
 
 import android.content.Context;
 import android.util.AttributeSet;

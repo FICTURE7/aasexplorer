@@ -3,17 +3,27 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:orientation="vertical"
-              tools:context="com.ficture7.aasexplorer.ui.BookmarkListActivity">
+              tools:context="com.ficture7.aasexplorer.view.activity.BookmarkListActivity">
 
-    <com.ficture7.aasexplorer.ui.view.LoaderView
+    <com.ficture7.aasexplorer.view.LoaderView
         android:id="@+id/view_loader"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:visibility="visible"/>
+
+    <com.ficture7.aasexplorer.view.MessageView
+        android:id="@android:id/empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:mv_title="Empty"
+        app:mv_subtitle="Bookmarks is empty, add some. :)"/>
 
 </LinearLayout>

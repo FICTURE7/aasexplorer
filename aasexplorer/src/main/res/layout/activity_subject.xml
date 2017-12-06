@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.ficture7.aasexplorer.ui.SubjectActivity">
+    tools:context="com.ficture7.aasexplorer.view.activity.SubjectActivity">
 
-    <com.ficture7.aasexplorer.ui.view.LoaderView
+    <com.ficture7.aasexplorer.view.LoaderView
         android:id="@+id/view_loader"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

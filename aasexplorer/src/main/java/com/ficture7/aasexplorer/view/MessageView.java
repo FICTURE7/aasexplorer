@@ -1,38 +1,35 @@
-package com.ficture7.aasexplorer.ui.view;
+package com.ficture7.aasexplorer.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ficture7.aasexplorer.R;
 
-public class ErrorView extends LinearLayout {
+public class MessageView extends LinearLayout {
 
     private final TextView titleTv;
     private final TextView subtitleTv;
-    private final Button retryBtn;
 
-    public ErrorView(Context context, AttributeSet attrs) {
+    public MessageView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.view_error, this, true);
+        inflater.inflate(R.layout.view_message, this, true);
 
-        titleTv = findViewById(R.id.text_error_title);
-        subtitleTv = findViewById(R.id.text_error_subtitle);
-        retryBtn = findViewById(R.id.btn_error_retry);
+        titleTv = findViewById(R.id.text_message_title);
+        subtitleTv = findViewById(R.id.text_message_subtitle);
 
-        TypedArray res = context.getTheme().obtainStyledAttributes(attrs, R.styleable.ErrorView, 0, 0);
+        TypedArray res = context.getTheme().obtainStyledAttributes(attrs, R.styleable.MessageView, 0, 0);
         String title = null;
         String subtitle = null;
 
         try {
-            title = res.getString(R.styleable.ErrorView_title);
-            subtitle = res.getString(R.styleable.ErrorView_subtitle);
+            title = res.getString(R.styleable.MessageView_mv_title);
+            subtitle = res.getString(R.styleable.MessageView_mv_subtitle);
         } finally {
             res.recycle();
         }

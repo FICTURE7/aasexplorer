@@ -8,4 +8,9 @@
         <attr name="title" format="string"/>
         <attr name="subtitle" format="string"/>
     </declare-styleable>
+
+    <declare-styleable name="MessageView">
+        <attr name="mv_title" format="string" />
+        <attr name="mv_subtitle" format="string" />
+    </declare-styleable>
 </resources>

@@ -10,6 +10,7 @@ public class App extends Application {
 
     private static App instance;
 
+    private Navigator navigator;
     private Bookmarks bookmarks;
     private Explorer explorer;
     private AppExplorerLoader explorerLoader;
@@ -25,6 +26,10 @@ public class App extends Application {
 
     public AppExplorerSaver getSaver() {
         return explorerSaver;
+    }
+
+    public Navigator getNavigator() {
+        return navigator;
     }
 
     public Bookmarks getBookmarks() {
@@ -73,12 +78,16 @@ public class App extends Application {
             throw new RuntimeException("Unexpected exception while building Explorer instance.", e);
         }
 
-        // Load bookmark values.
+        // Initialize bookmarks and load bookmarks from disk.
         bookmarks = new Bookmarks(getApplicationContext());
+        // Initialize navigator.
+        navigator = new Navigator();
 
         // Start loading the subjects on a separate thread immediately when
         // the application is created.
         getLoader().getLoadSubjectsAsyncTask().execute();
+
+        // Set the singleton instance.
         instance = this;
     }
 }

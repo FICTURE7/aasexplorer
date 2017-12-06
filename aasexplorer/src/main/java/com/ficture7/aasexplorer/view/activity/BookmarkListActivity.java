@@ -1,4 +1,4 @@
-package com.ficture7.aasexplorer.ui;
+package com.ficture7.aasexplorer.view.activity;
 
 import android.app.ListActivity;
 import android.content.Context;
@@ -18,8 +18,9 @@ import com.ficture7.aasexplorer.AppExplorerLoader;
 import com.ficture7.aasexplorer.Explorer;
 import com.ficture7.aasexplorer.R;
 import com.ficture7.aasexplorer.model.Subject;
-import com.ficture7.aasexplorer.ui.view.LoaderView;
+import com.ficture7.aasexplorer.view.LoaderView;
 
+// This is also the MainActivity.
 public class BookmarkListActivity extends ListActivity {
 
     private LoaderView loaderView;
@@ -73,13 +74,12 @@ public class BookmarkListActivity extends ListActivity {
         switch(item.getItemId()) {
             case R.id.menu_add:
                 if (App.getInstance().getExplorer().alevel().subjects().isLoaded()) {
-                    Intent intent = new Intent(this, EditBookmarkListActivity.class);
-                    startActivity(intent);
+                    App.getInstance().getNavigator().navigateToEditBookmarks(this);
                     return true;
                 } else {
                     Toast.makeText(this, "Subjects not loaded yet.", Toast.LENGTH_LONG).show();
-                    return false;
                 }
+                return false;
 
             default:
                 return super.onOptionsItemSelected(item);
