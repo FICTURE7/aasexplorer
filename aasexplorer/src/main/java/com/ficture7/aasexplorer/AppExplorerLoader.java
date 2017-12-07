@@ -1,7 +1,6 @@
 package com.ficture7.aasexplorer;
 
 import android.os.AsyncTask;
-import android.os.Looper;
 import android.view.View;
 
 import com.ficture7.aasexplorer.client.DownloadException;
@@ -14,7 +13,10 @@ import com.ficture7.aasexplorer.util.LooperUtil;
 import com.ficture7.aasexplorer.view.LoaderView;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+
+import static com.ficture7.aasexplorer.util.ObjectUtil.checkNotNull;
 
 public class AppExplorerLoader extends ExplorerLoader {
 
@@ -38,8 +40,6 @@ public class AppExplorerLoader extends ExplorerLoader {
         updateLoaderViewRunnable = new UpdateLoaderViewRunnable();
     }
 
-    //TODO: Do all calls to setStatus in loadSubjects & loadResources method.
-
     public Status getStatus() {
         return status;
     }
@@ -47,10 +47,6 @@ public class AppExplorerLoader extends ExplorerLoader {
     private void setStatus(Status status) {
         this.status = status;
         updateLoaderView();
-    }
-
-    private void setStatusNoUpdate(Status status) {
-        this.status = status;
     }
 
     public boolean getAutoSave() {
@@ -97,41 +93,67 @@ public class AppExplorerLoader extends ExplorerLoader {
 
     @Override
     public <T extends Examination> Iterable<SubjectSource> loadSubjects(Class<T> examinationClass) throws Exception {
-        Iterable<SubjectSource> sources =  super.loadSubjects(examinationClass);
+        checkNotNull(examinationClass, "examinationClass");
+        setStatus(Status.LOADING_SUBJECTS_FROM_STORE);
 
-        // Check if we're running inside the doInBackground method (kinda).
-        // If yes, we don't push an update to the UI yet.
-        if (getLoadSubjectsAsyncTask().workerThread != Thread.currentThread()) {
-            setStatus(Status.IDLE);
-        } else {
-            setStatusNoUpdate(Status.IDLE);
+        // Try to load from disk first.
+        Iterable<SubjectSource> sources = loadSubjectsFromStore(examinationClass);
+        if (sources == null) {
+            setStatus(Status.LOADING_SUBJECTS_FROM_CLIENTS);
+            // Load from the internet if we can't for some reason.
+            return loadSubjectsFromClients(examinationClass);
+        }
+
+        Iterator<SubjectSource> iterator = sources.iterator();
+        boolean empty = iterator.hasNext();
+        if (empty || hasExpired(iterator.next().date())) {
+            setStatus(Status.LOADING_SUBJECTS_FROM_CLIENTS);
+
+            // Try to load from the internet if the sources are empty for some reason or
+            // if stored data is considered expired.
+            try {
+                sources = loadSubjectsFromClients(examinationClass);
+            } catch (Exception e) {
+                // If the data loaded from disk was empty and loading from the internet
+                // threw an exception, treat as error.
+                if (empty) {
+                    throw e;
+                }
+            }
         }
         return sources;
     }
 
     @Override
     public Iterable<ResourceSource> loadResources(Subject subject) throws Exception {
-        Iterable<ResourceSource> sources =  super.loadResources(subject);
+        checkNotNull(subject, "subject");
+        setStatus(Status.LOADING_RESOURCES_FROM_STORE);
 
-        // Check if we're running inside the doInBackground method (kinda).
-        // If yes, we don't push an update to the UI yet.
-        if (getLoadResourcesAsyncTask(subject).workerThread != Thread.currentThread()) {
-            setStatus(Status.IDLE);
-        } else {
-            setStatusNoUpdate(Status.IDLE);
+        // Same strategy as loadSubjects().
+        Iterable<ResourceSource> sources = loadResourcesFromStore(subject);
+        if (sources == null) {
+            setStatus(Status.LOADING_RESOURCES_FROM_CLIENTS);
+            return loadResourcesFromClients(subject);
+        }
+
+        Iterator<ResourceSource> iterator = sources.iterator();
+        boolean empty = iterator.hasNext();
+        if (empty || hasExpired(iterator.next().date())) {
+            setStatus(Status.LOADING_RESOURCES_FROM_CLIENTS);
+
+            try {
+                sources = loadResourcesFromClients(subject);
+            } catch (Exception e) {
+                if (empty) {
+                    throw e;
+                }
+            }
         }
         return sources;
     }
 
     @Override
-    protected <T extends Examination> Iterable<SubjectSource> loadSubjectsFromStore(Class<T> examinationClass) throws Exception {
-        setStatus(Status.LOADING_SUBJECTS_FROM_STORE);
-        return super.loadSubjectsFromStore(examinationClass);
-    }
-
-    @Override
     protected <T extends Examination> Iterable<SubjectSource> loadSubjectsFromClients(Class<T> examinationClass) throws ParseException, DownloadException {
-        setStatus(Status.LOADING_SUBJECTS_FROM_CLIENTS);
         Iterable<SubjectSource> sources = super.loadSubjectsFromClients(examinationClass);
 
         // If auto-save is enabled we starting saving the newly retrieved sources.
@@ -142,14 +164,7 @@ public class AppExplorerLoader extends ExplorerLoader {
     }
 
     @Override
-    protected Iterable<ResourceSource> loadResourcesFromStore(Subject subject) throws Exception {
-        setStatus(Status.LOADING_RESOURCES_FROM_STORE);
-        return super.loadResourcesFromStore(subject);
-    }
-
-    @Override
     protected Iterable<ResourceSource> loadResourcesFromClients(Subject subject) throws ParseException, DownloadException {
-        setStatus(Status.LOADING_RESOURCES_FROM_CLIENTS);
         Iterable<ResourceSource> sources = super.loadResourcesFromClients(subject);
 
         // If auto-save is enabled we starting saving the newly retrieved sources.
@@ -184,8 +199,6 @@ public class AppExplorerLoader extends ExplorerLoader {
     public class LoadSubjectsAsyncTask extends AsyncTask<Void, Void, Void> {
 
         private LoadCallback loadCallback;
-        // Thread on which doInBackground method is running.
-        private Thread workerThread;
 
         public void setLoadCallback(LoadCallback loadCallback) {
             this.loadCallback = loadCallback;
@@ -200,8 +213,6 @@ public class AppExplorerLoader extends ExplorerLoader {
         @Override
         protected Void doInBackground(Void... args) {
             //TODO: Track exception.
-
-            workerThread = Thread.currentThread();
 
             try {
                 getExplorer().alevel().subjects().load();
@@ -221,7 +232,7 @@ public class AppExplorerLoader extends ExplorerLoader {
                 // NOTE: Consider making sure running on the UI thread.
                 loadCallback.onLoad();
             }
-            updateLoaderView();
+            setStatus(AppExplorerLoader.Status.IDLE);
         }
     }
 
@@ -232,13 +243,9 @@ public class AppExplorerLoader extends ExplorerLoader {
         }
 
         private Subject subject;
-        // Thread on which doInBackground method is running.
-        private Thread workerThread;
 
         @Override
         protected Void doInBackground(Void... args) {
-            workerThread = Thread.currentThread();
-
             try {
                 subject.resources().load();
             } catch (Exception e) {
@@ -249,7 +256,7 @@ public class AppExplorerLoader extends ExplorerLoader {
 
         @Override
         protected void onPostExecute(Void args) {
-            updateLoaderView();
+            setStatus(AppExplorerLoader.Status.IDLE);
         }
     }
 

@@ -137,7 +137,6 @@ public class ExplorerLoader implements Loader {
         List<SubjectSource> sources = new ArrayList<>(64);
 
         for (Client client : getExplorer().clients()) {
-            //TODO: More defensive loading mechanism.
             Iterable<SubjectSource> subjectSources = client.getSubjects(examinationClass);
 
             // Client does not support the examination kind.
@@ -182,7 +181,6 @@ public class ExplorerLoader implements Loader {
         // Iterate through the list of sources we have, then get the resource sources
         // from the corresponding provider.
         for (SubjectSource subjectSource : subjectSources) {
-            //TODO: More defensive loading mechanism.
             Iterable<ResourceSource> resourceSources = subjectSource.client().getResources(subjectSource);
 
             // Client does not support the examination kind.
