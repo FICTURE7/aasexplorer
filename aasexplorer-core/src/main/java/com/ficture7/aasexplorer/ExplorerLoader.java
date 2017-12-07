@@ -7,6 +7,7 @@ import com.ficture7.aasexplorer.model.ResourceSource;
 import com.ficture7.aasexplorer.model.Subject;
 import com.ficture7.aasexplorer.model.SubjectSource;
 import com.ficture7.aasexplorer.model.examination.Examination;
+import com.ficture7.aasexplorer.store.Store;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -69,6 +70,15 @@ public class ExplorerLoader implements Loader {
         daysBeforeExpiration = days;
     }
 
+    /**
+     * Loads the {@link SubjectSource}s for the specified {@link Examination} type.
+     *
+     * @param examinationClass {@link Examination} class.
+     * @param <T> Type of {@link Examination}.
+     * @return {@link SubjectSource}s; can return null under certain circumstances.
+     * @throws NullPointerException {@code examinationClass} is null.
+     * @throws Exception Exception when loading the {@link SubjectSource}s.
+     */
     @Override
     public <T extends Examination> Iterable<SubjectSource> loadSubjects(Class<T> examinationClass) throws Exception {
         checkNotNull(examinationClass, "examinationClass");
@@ -91,6 +101,14 @@ public class ExplorerLoader implements Loader {
         return sources;
     }
 
+    /**
+     * Loads the {@link ResourceSource}s for the specified {@link Subject} instance.
+     *
+     * @param subject {@link Subject} instance.
+     * @return {@link ResourceSource}s; can return null under certain circumstances.
+     * @throws NullPointerException {@code subject} is null.
+     * @throws Exception Exception  when loading the {@link ResourceSource}s.
+     */
     @Override
     public Iterable<ResourceSource> loadResources(Subject subject) throws Exception {
         checkNotNull(subject, "subject");
@@ -104,6 +122,16 @@ public class ExplorerLoader implements Loader {
         return sources;
     }
 
+    /**
+     * Loads the {@link SubjectSource}s for the specified {@link Examination} type from the {@link Client}s
+     * of the {@link Explorer}.
+     *
+     * @param examinationClass {@link Examination} class.
+     * @param <T> Type of {@link Examination}.
+     * @return {@link SubjectSource}s; can return null under certain circumstances.
+     * @throws ParseException Error while parsing data.
+     * @throws DownloadException Error while downloading data.
+     */
     protected <T extends Examination> Iterable<SubjectSource> loadSubjectsFromClients(Class<T> examinationClass) throws ParseException, DownloadException {
         // Merge the result from the different clients into a single iterable.
         List<SubjectSource> sources = new ArrayList<>(64);
@@ -125,11 +153,28 @@ public class ExplorerLoader implements Loader {
         return sources;
     }
 
+    /**
+     * Loads the {@link SubjectSource}s for the specified {@link Examination} type from the {@link Store}
+     * of the {@link Explorer}.
+     *
+     * @param examinationClass {@link Examination} class.
+     * @param <T> Type of {@link Examination}.
+     * @return {@link SubjectSource}s; can return null under certain circumstances.
+     * @throws Exception Exception when loading the {@link SubjectSource}s.
+     */
     protected <T extends Examination> Iterable<SubjectSource> loadSubjectsFromStore(Class<T> examinationClass) throws Exception {
         return getExplorer().store().loadSubjects(examinationClass);
     }
 
-    protected Iterable<ResourceSource> loadResourcesFromClients(Subject subject) throws Exception {
+    /**
+     * Loads the {@link ResourceSource}s for the specified {@link Subject} instance from the
+     *
+     * @param subject {@link Subject} instance.
+     * @return {@link ResourceSource}s; can return null under certain circumstances.
+     * @throws ParseException Error while parsing data.
+     * @throws DownloadException Error while downloading data.
+     */
+    protected Iterable<ResourceSource> loadResourcesFromClients(Subject subject) throws ParseException, DownloadException {
         // Merge the result from the different clients into a single iterable.
         List<ResourceSource> sources = new ArrayList<>(64);
         Iterable<SubjectSource> subjectSources = subject.sources();
@@ -153,6 +198,14 @@ public class ExplorerLoader implements Loader {
         return sources;
     }
 
+    /**
+     * Loads the {@link ResourceSource}s for the specified {@link Subject} instance from the {@link Store}
+     * of the {@link Explorer}.
+     *
+     * @param subject {@link Subject} instance.
+     * @return {@link ResourceSource}s; can return null under certain circumstances.
+     * @throws Exception Exception  when loading the {@link ResourceSource}s.
+     */
     protected Iterable<ResourceSource> loadResourcesFromStore(Subject subject) throws Exception {
         Iterator<ResourceSource> iterator;
         Iterable<ResourceSource> sources = getExplorer().store().loadResources(subject);
@@ -174,6 +227,11 @@ public class ExplorerLoader implements Loader {
         return sources;
     }
 
+    /**
+     * Determines if the {@link Date} specified is considered expired.
+     * @param date {@link Date} to check.
+     * @return true if expired; otherwise false.t
+     */
     protected boolean hasExpired(Date date) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
