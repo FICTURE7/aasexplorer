@@ -148,7 +148,7 @@ public class AppExplorerLoader extends ExplorerLoader {
     }
 
     @Override
-    protected Iterable<ResourceSource> loadResourcesFromClients(Subject subject) throws Exception {
+    protected Iterable<ResourceSource> loadResourcesFromClients(Subject subject) throws ParseException, DownloadException {
         setStatus(Status.LOADING_RESOURCES_FROM_CLIENTS);
         Iterable<ResourceSource> sources = super.loadResourcesFromClients(subject);
 
