@@ -47,7 +47,7 @@ public class EditBookmarkListActivity extends ListActivity {
         getMenuInflater().inflate(R.menu.activity_edit_bookmarks, menu);
 
         SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        searchView.setQueryHint("Search...");
+        searchView.setQueryHint(getString(R.string.hint_search));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
              @Override
             public boolean onQueryTextSubmit(String query) {

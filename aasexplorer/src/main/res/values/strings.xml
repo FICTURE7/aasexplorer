@@ -5,7 +5,16 @@
     <string name="title_error">Error</string>
     <string name="subtitle_error">Error occurred.</string>
 
+    <string name="message_loading_subjects_from_internet">Loading subjects from internet…</string>
+    <string name="message_loading_subjects_from_store">Loading subjects from local store…</string>
+    <string name="message_loading_resources_from_internet">Loading resources from internet…</string>
+    <string name="message_loading_resources_from_store">Loading resources from local store…</string>
+
     <string name="action_retry">Retry</string>
     <string name="action_edit_bookmarks">Edit Bookmarks</string>
     <string name="action_search_subjects">Search Subjects</string>
+    <string name="message_subjects_not_loaded_yet">Subjects not loaded yet.</string>
+    <string name="hint_search">Search...</string>
+    <string name="title_question_papers">Question Papers</string>
+    <string name="title_marking_schemes">Marking Schemes</string>
 </resources>

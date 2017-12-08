@@ -45,8 +45,8 @@ public class SubjectActivity extends ListActivity {
         }
 
         entries = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
-        entries.add("Question Paper");
-        entries.add("Marking Schemes");
+        entries.add(getString(R.string.title_question_papers));
+        entries.add(getString(R.string.title_marking_schemes));
 
         setContentView(R.layout.activity_subject);
         setListAdapter(entries);

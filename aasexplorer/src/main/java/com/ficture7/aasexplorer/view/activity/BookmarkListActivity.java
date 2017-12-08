@@ -77,7 +77,7 @@ public class BookmarkListActivity extends ListActivity {
                     App.getInstance().getNavigator().navigateToEditBookmarks(this);
                     return true;
                 } else {
-                    Toast.makeText(this, "Subjects not loaded yet.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.message_subjects_not_loaded_yet, Toast.LENGTH_LONG).show();
                 }
                 return false;
 

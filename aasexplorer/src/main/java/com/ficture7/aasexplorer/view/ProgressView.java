@@ -37,6 +37,10 @@ public class ProgressView extends LinearLayout {
         return messageTv.getText();
     }
 
+    public void setMessage(int resId) {
+        setMessage(getResources().getText(resId));
+    }
+
     public void setMessage(CharSequence message) {
         messageTv.setText(message);
     }

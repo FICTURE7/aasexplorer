@@ -275,19 +275,18 @@ public class AppExplorerLoader extends ExplorerLoader {
                 getLoaderView().setVisibility(View.VISIBLE);
             }
 
-            //TODO: Turn those stuff into strings.xml resources.
             switch (getStatus()) {
                 case LOADING_SUBJECTS_FROM_STORE:
-                    getLoaderView().getProgressView().setMessage("Loading subjects from local store...");
+                    getLoaderView().getProgressView().setMessage(R.string.message_loading_subjects_from_store);
                     break;
                 case LOADING_SUBJECTS_FROM_CLIENTS:
-                    getLoaderView().getProgressView().setMessage("Loading subjects from internet...");
+                    getLoaderView().getProgressView().setMessage(R.string.message_loading_subjects_from_internet);
                     break;
                 case LOADING_RESOURCES_FROM_STORE:
-                    getLoaderView().getProgressView().setMessage("Loading resources from local store...");
+                    getLoaderView().getProgressView().setMessage(R.string.message_loading_resources_from_store);
                     break;
                 case LOADING_RESOURCES_FROM_CLIENTS:
-                    getLoaderView().getProgressView().setMessage("Loading resources from internet...");
+                    getLoaderView().getProgressView().setMessage(R.string.message_loading_resources_from_internet);
                     break;
             }
         }
