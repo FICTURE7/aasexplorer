@@ -20,9 +20,7 @@ import static com.ficture7.aasexplorer.util.ObjectUtil.checkNotNull;
 
 public class AppExplorerLoader extends ExplorerLoader {
 
-    private final UpdateLoaderViewRunnable updateLoaderViewRunnable;
-
-    private Map<Subject, LoadResourcesAsyncTask> loadResourcesAsyncTaskMap;
+    private final Map<Subject, LoadResourcesAsyncTask> loadResourcesAsyncTaskMap;
     private LoadSubjectsAsyncTask loadSubjectsAsyncTask;
 
     private boolean autoSave;
@@ -37,7 +35,6 @@ public class AppExplorerLoader extends ExplorerLoader {
 
         status = Status.IDLE;
         loadResourcesAsyncTaskMap = new HashMap<>();
-        updateLoaderViewRunnable = new UpdateLoaderViewRunnable();
     }
 
     public Status getStatus() {
@@ -45,8 +42,50 @@ public class AppExplorerLoader extends ExplorerLoader {
     }
 
     private void setStatus(Status status) {
-        this.status = status;
-        updateLoaderView();
+        setStatus(status, null);
+    }
+
+    private void setStatus(Status status, Exception exception) {
+        updateLoaderView(status, exception);
+    }
+
+    private void setError(Exception e) {
+        if (e == null) {
+            getLoaderView().getProgressView().setVisibility(View.VISIBLE);
+            getLoaderView().getErrorView().setVisibility(View.GONE);
+        } else {
+            getLoaderView().getProgressView().setVisibility(View.GONE);
+            getLoaderView().getErrorView().setVisibility(View.VISIBLE);
+
+            String message;
+            if (e instanceof DownloadException) {
+                message = "Error downloading data";
+            } else if (e instanceof ParseException) {
+                message = "Error parsing data";
+            } else {
+                message = "Unknown error";
+            }
+
+            switch (getStatus()) {
+                case LOADING_SUBJECTS_FROM_STORE:
+                    message += " when loading subjects from local store.";
+                    break;
+                case LOADING_SUBJECTS_FROM_CLIENTS:
+                    message += " when loading subjects from internet.";
+                    break;
+                case LOADING_RESOURCES_FROM_STORE:
+                    message += " when loading resources from local store.";
+                    break;
+                case LOADING_RESOURCES_FROM_CLIENTS:
+                    message += " when loading resources from internet.";
+                    break;
+                default:
+                    message += ".";
+                    break;
+            }
+
+            getLoaderView().getErrorView().setSubtitle(message);
+        }
     }
 
     public boolean getAutoSave() {
@@ -69,7 +108,7 @@ public class AppExplorerLoader extends ExplorerLoader {
 
         loaderView = view;
         // Force an update on the new LoaderView instance.
-        updateLoaderView();
+        updateLoaderView(getStatus(), null);
     }
 
     public LoadSubjectsAsyncTask getLoadSubjectsAsyncTask() {
@@ -105,7 +144,7 @@ public class AppExplorerLoader extends ExplorerLoader {
         }
 
         Iterator<SubjectSource> iterator = sources.iterator();
-        boolean empty = iterator.hasNext();
+        boolean empty = !iterator.hasNext();
         if (empty || hasExpired(iterator.next().date())) {
             setStatus(Status.LOADING_SUBJECTS_FROM_CLIENTS);
 
@@ -129,7 +168,8 @@ public class AppExplorerLoader extends ExplorerLoader {
         checkNotNull(subject, "subject");
         setStatus(Status.LOADING_RESOURCES_FROM_STORE);
 
-        // Same strategy as loadSubjects().
+        //NOTE: Use the same loading strategy as loadSubjects().
+
         Iterable<ResourceSource> sources = loadResourcesFromStore(subject);
         if (sources == null) {
             setStatus(Status.LOADING_RESOURCES_FROM_CLIENTS);
@@ -137,7 +177,7 @@ public class AppExplorerLoader extends ExplorerLoader {
         }
 
         Iterator<ResourceSource> iterator = sources.iterator();
-        boolean empty = iterator.hasNext();
+        boolean empty = !iterator.hasNext();
         if (empty || hasExpired(iterator.next().date())) {
             setStatus(Status.LOADING_RESOURCES_FROM_CLIENTS);
 
@@ -176,14 +216,14 @@ public class AppExplorerLoader extends ExplorerLoader {
 
     // Updates the values of the getLoaderView() instance based on the value
     // of getStatus().
-    private void updateLoaderView() {
+    private void updateLoaderView(Status status, Exception exception) {
         // Make sure we have the LoaderView instance first.
         if (getLoaderView() == null) {
             return;
         }
 
         // Make sure we run the code on the UI thread.
-        LooperUtil.runOnUiThread(updateLoaderViewRunnable);
+        LooperUtil.runOnUiThread(new UpdateLoaderViewRunnable(status, exception));
     }
 
     public enum Status {
@@ -193,12 +233,28 @@ public class AppExplorerLoader extends ExplorerLoader {
         LOADING_SUBJECTS_FROM_CLIENTS,
 
         LOADING_RESOURCES_FROM_STORE,
-        LOADING_RESOURCES_FROM_CLIENTS
+        LOADING_RESOURCES_FROM_CLIENTS,
     }
 
     public class LoadSubjectsAsyncTask extends AsyncTask<Void, Void, Void> {
 
+        private Exception exception;
         private LoadCallback loadCallback;
+
+        @Override
+        protected Void doInBackground(Void... args) {
+            try {
+                getExplorer().alevel().subjects().load();
+            } catch (Exception e) {
+                exception = e;
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void args) {
+            fireLoadCallback();
+        }
 
         public void setLoadCallback(LoadCallback loadCallback) {
             this.loadCallback = loadCallback;
@@ -210,29 +266,12 @@ public class AppExplorerLoader extends ExplorerLoader {
             }
         }
 
-        @Override
-        protected Void doInBackground(Void... args) {
-            //TODO: Track exception.
-
-            try {
-                getExplorer().alevel().subjects().load();
-            } catch (Exception e) {
-                return null;
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void args) {
-            fireLoadCallback();
-        }
-
         private void fireLoadCallback() {
-            if (loadCallback != null) {
-                // NOTE: Consider making sure running on the UI thread.
+            if (exception == null && loadCallback != null) {
                 loadCallback.onLoad();
             }
-            setStatus(AppExplorerLoader.Status.IDLE);
+
+            setStatus(AppExplorerLoader.Status.IDLE, exception);
         }
     }
 
@@ -242,6 +281,7 @@ public class AppExplorerLoader extends ExplorerLoader {
             this.subject = subject;
         }
 
+        private Exception exception;
         private Subject subject;
 
         @Override
@@ -249,14 +289,14 @@ public class AppExplorerLoader extends ExplorerLoader {
             try {
                 subject.resources().load();
             } catch (Exception e) {
-                return null;
+                exception = e;
             }
             return null;
         }
 
         @Override
         protected void onPostExecute(Void args) {
-            setStatus(AppExplorerLoader.Status.IDLE);
+            setStatus(AppExplorerLoader.Status.IDLE, exception);
         }
     }
 
@@ -266,28 +306,42 @@ public class AppExplorerLoader extends ExplorerLoader {
 
     private class UpdateLoaderViewRunnable implements Runnable {
 
+        private final Status status;
+        private final Exception exception;
+
+        public UpdateLoaderViewRunnable(Status status, Exception exception) {
+            this.status = status;
+            this.exception = exception;
+        }
+
         @Override
         public void run() {
-            if (getStatus() == Status.IDLE) {
-                // Hide the LoaderView when we're not doing anything.
-                getLoaderView().setVisibility(View.GONE);
+            if (exception != null) {
+                setError(exception);
+                AppExplorerLoader.this.status = status;
             } else {
-                getLoaderView().setVisibility(View.VISIBLE);
-            }
+                AppExplorerLoader.this.status = status;
+                if (getStatus() == Status.IDLE) {
+                    // Hide the LoaderView when we're not doing anything.
+                    getLoaderView().setVisibility(View.GONE);
+                } else {
+                    getLoaderView().setVisibility(View.VISIBLE);
+                }
 
-            switch (getStatus()) {
-                case LOADING_SUBJECTS_FROM_STORE:
-                    getLoaderView().getProgressView().setMessage(R.string.message_loading_subjects_from_store);
-                    break;
-                case LOADING_SUBJECTS_FROM_CLIENTS:
-                    getLoaderView().getProgressView().setMessage(R.string.message_loading_subjects_from_internet);
-                    break;
-                case LOADING_RESOURCES_FROM_STORE:
-                    getLoaderView().getProgressView().setMessage(R.string.message_loading_resources_from_store);
-                    break;
-                case LOADING_RESOURCES_FROM_CLIENTS:
-                    getLoaderView().getProgressView().setMessage(R.string.message_loading_resources_from_internet);
-                    break;
+                switch (getStatus()) {
+                    case LOADING_SUBJECTS_FROM_STORE:
+                        getLoaderView().getProgressView().setMessage(R.string.message_loading_subjects_from_store);
+                        break;
+                    case LOADING_SUBJECTS_FROM_CLIENTS:
+                        getLoaderView().getProgressView().setMessage(R.string.message_loading_subjects_from_internet);
+                        break;
+                    case LOADING_RESOURCES_FROM_STORE:
+                        getLoaderView().getProgressView().setMessage(R.string.message_loading_resources_from_store);
+                        break;
+                    case LOADING_RESOURCES_FROM_CLIENTS:
+                        getLoaderView().getProgressView().setMessage(R.string.message_loading_resources_from_internet);
+                        break;
+                }
             }
         }
     }

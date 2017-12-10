@@ -6,6 +6,9 @@
     <string name="title_question_papers">Question Papers</string>
     <string name="title_marking_schemes">Marking Schemes</string>
 
+    <string name="title_bookmarks">Bookmarks</string>
+    <string name="title_edit_bookmarks">Edit Bookmarks</string>
+
     <string name="subtitle_error">Error occurred.</string>
 
     <string name="message_loading_subjects_from_internet">Loading subjects from internet…</string>

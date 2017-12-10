@@ -14,8 +14,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".view.activity.BookmarkListActivity"
-            android:label="Bookmarks">
+            android:name=".view.activity.BookmarkListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -25,7 +24,7 @@
 
         <activity
             android:name=".view.activity.EditBookmarkListActivity"
-            android:label="Edit Bookmarks">
+            android:label="@string/title_edit_bookmarks">
         </activity>
 
         <activity android:name=".view.activity.SubjectActivity">

@@ -32,6 +32,8 @@ public class BookmarkListActivity extends ListActivity {
 
         adapter = new SubjectAdapter(this);
 
+        // Set title here otherwise Android will use the title in manifest.
+        setTitle(R.string.title_bookmarks);
         setContentView(R.layout.activity_bookmarks);
         setListAdapter(adapter);
 
