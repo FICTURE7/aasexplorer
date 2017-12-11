@@ -79,7 +79,18 @@ public class QuestionPaperListActivity extends ListActivity {
 
             QuestionPaper questionPaper = getItem(position);
             if (questionPaper != null) {
-                holder.nameLbl.setText(questionPaper.name());
+                String season = "";
+                switch (questionPaper.session().season()) {
+                    case SUMMER:
+                        season = " Summer";
+                        break;
+                    case WINTER:
+                        season = " Winter";
+                        break;
+                }
+                String name = "Paper " + questionPaper.number() + " - " + questionPaper.session().year() + season;
+
+                holder.nameLbl.setText(name);
             }
 
             return convertView;

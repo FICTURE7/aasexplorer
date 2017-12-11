@@ -224,22 +224,25 @@ public class ResourceRepository implements Repository<String, Resource>, Iterabl
             int index1;
             int index2;
             int index3;
+            int index4;
 
             index1 = name.indexOf('_');
             index2 = name.indexOf('_', index1 + 1);
             index3 = name.indexOf('_', index2 + 1);
+            index4 =  name.indexOf('.', index3 + 1);
 
-            if (index1 == -1 || index2 == -1 || index3 == -1) {
+            if (index1 == -1 || index2 == -1 || index3 == -1 || index4 == -1) {
                 return new Resource(name);
             }
 
             String id = name.substring(0, index1);
             String session = name.substring(index1 + 1, index2);
             String type = name.substring(index2 + 1, index3);
+            String number = name.substring(index3 + 1, index4);
 
             switch (type) {
                 case "qp":
-                    return new QuestionPaper(name, Session.parse(session));
+                    return new QuestionPaper(name, Session.parse(session), Integer.parseInt(number));
                 case "ms":
                     return new MarkingScheme(name, Session.parse(session));
                 default:
