@@ -90,4 +90,10 @@ public class App extends Application {
         // Set the singleton instance.
         instance = this;
     }
+
+    public static final class Intents {
+        public static final String BASE = "com.ficture7.aasexplorer.";
+
+        public static final String SUBJECT_ID = BASE + "SUBJECT_ID";
+    }
 }

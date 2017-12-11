@@ -93,7 +93,7 @@ public class BookmarkListActivity extends ListActivity {
         Subject subject = adapter.getItem(position);
         if (subject != null) {
             Intent intent = new Intent(this, SubjectActivity.class);
-            intent.putExtra("SUBJECT_ID", subject.id());
+            intent.putExtra(App.Intents.SUBJECT_ID, subject.id());
 
             startActivity(intent);
         }

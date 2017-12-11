@@ -30,7 +30,7 @@ public class QuestionPaperListActivity extends ListActivity {
         adapter = new QuestionPaperAdapter(this);
 
         Intent intent = getIntent();
-        int id = intent.getIntExtra("SUBJECT_ID", -1);
+        int id = intent.getIntExtra(App.Intents.SUBJECT_ID, -1);
         if (id != -1) {
             Explorer explorer = App.getInstance().getExplorer();
             subject = explorer.alevel().subjects().get(id);

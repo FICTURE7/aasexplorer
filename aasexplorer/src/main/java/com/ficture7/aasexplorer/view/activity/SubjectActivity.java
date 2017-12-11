@@ -25,7 +25,7 @@ public class SubjectActivity extends ListActivity {
         super.onCreate(savedInstanceState);
 
         Intent intent = getIntent();
-        int id = intent.getIntExtra("SUBJECT_ID", -1);
+        int id = intent.getIntExtra(App.Intents.SUBJECT_ID, -1);
         if (id != -1) {
             Explorer explorer = App.getInstance().getExplorer();
             Subject subject = explorer.alevel().subjects().get(id);
@@ -60,7 +60,7 @@ public class SubjectActivity extends ListActivity {
         switch(position) {
             case 0:
                 Intent intent = new Intent(this, QuestionPaperListActivity.class);
-                intent.putExtra("SUBJECT_ID", subject.id());
+                intent.putExtra(App.Intents.SUBJECT_ID, subject.id());
 
                 startActivity(intent);
                 break;
