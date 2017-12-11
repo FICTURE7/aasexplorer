@@ -8,14 +8,22 @@ public class QuestionPaperTest {
 
     @Test(expected = NullPointerException.class)
     public void ctor_sessionNull_throwsException() {
-        new QuestionPaper("A", null);
+        new QuestionPaper("A", null, 1);
     }
 
     @Test
     public void session_returnsInitializedSession() {
         Session session = new Session(Session.Season.SUMMER, 10);
-        QuestionPaper qp = new QuestionPaper("a", session);
+        QuestionPaper qp = new QuestionPaper("a", session, 1);
 
         assertSame(session, qp.session());
+    }
+
+    @Test
+    public void number_returnsInitializedNumber() {
+        Session session = new Session(Session.Season.SUMMER, 10);
+        QuestionPaper qp = new QuestionPaper("a", session, 1);
+
+        assertSame(1, qp.number());
     }
 }
