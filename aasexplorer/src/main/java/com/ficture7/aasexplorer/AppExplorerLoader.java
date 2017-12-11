@@ -1,6 +1,7 @@
 package com.ficture7.aasexplorer;
 
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.View;
 
 import com.ficture7.aasexplorer.client.DownloadException;
@@ -19,6 +20,8 @@ import java.util.Map;
 import static com.ficture7.aasexplorer.util.ObjectUtil.checkNotNull;
 
 public class AppExplorerLoader extends ExplorerLoader {
+
+    private static final String TAG = "AppExplorerLoader";
 
     private final Map<Subject, LoadResourcesAsyncTask> loadResourcesTasks;
     private final LoadSubjectsAsyncTask loadSubjectsTask;
@@ -88,6 +91,7 @@ public class AppExplorerLoader extends ExplorerLoader {
         // Try to load from disk first.
         Iterable<SubjectSource> sources = loadSubjectsFromStore(examinationClass);
         if (sources == null) {
+            Log.i(TAG, "loadSubjectsFromStore returned null -> falling back on loadSubjectsFromClients");
             updateLoaderView(Status.LOADING_SUBJECTS_FROM_CLIENTS, null);
             // Load from the internet if we can't for some reason.
             return loadSubjectsFromClients(examinationClass);
@@ -96,6 +100,7 @@ public class AppExplorerLoader extends ExplorerLoader {
         Iterator<SubjectSource> iterator = sources.iterator();
         boolean empty = !iterator.hasNext();
         if (empty || hasExpired(iterator.next().date())) {
+            Log.i(TAG, "loadSubjectsFromStore data was null or has expired -> falling back on loadSubjectsFromClients");
             updateLoaderView(Status.LOADING_SUBJECTS_FROM_CLIENTS, null);
 
             // Try to load from the internet if the sources are empty for some reason or
@@ -122,6 +127,7 @@ public class AppExplorerLoader extends ExplorerLoader {
 
         Iterable<ResourceSource> sources = loadResourcesFromStore(subject);
         if (sources == null) {
+            Log.i(TAG, "loadResourcesFromStore returned null -> falling back on loadResourcesFromClients");
             updateLoaderView(Status.LOADING_RESOURCES_FROM_CLIENTS, null);
             return loadResourcesFromClients(subject);
         }
@@ -129,6 +135,7 @@ public class AppExplorerLoader extends ExplorerLoader {
         Iterator<ResourceSource> iterator = sources.iterator();
         boolean empty = !iterator.hasNext();
         if (empty || hasExpired(iterator.next().date())) {
+            Log.i(TAG, "loadResourcesFromStore data was null or empty -> falling back on loadResourcesFromClients");
             updateLoaderView(Status.LOADING_RESOURCES_FROM_CLIENTS, null);
 
             try {
