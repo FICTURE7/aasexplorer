@@ -92,10 +92,7 @@ public class BookmarkListActivity extends ListActivity {
     protected void onListItemClick(ListView listView, View view, int position, long id) {
         Subject subject = adapter.getItem(position);
         if (subject != null) {
-            Intent intent = new Intent(this, SubjectActivity.class);
-            intent.putExtra(App.Intents.SUBJECT_ID, subject.id());
-
-            startActivity(intent);
+            App.getInstance().getNavigator().navigateToSubject(this, subject.id());
         }
     }
 

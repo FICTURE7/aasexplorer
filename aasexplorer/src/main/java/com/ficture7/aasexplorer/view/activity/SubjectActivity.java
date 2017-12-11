@@ -59,11 +59,9 @@ public class SubjectActivity extends ListActivity {
     protected void onListItemClick(ListView l, View v, int position, long id) {
         switch(position) {
             case 0:
-                Intent intent = new Intent(this, QuestionPaperListActivity.class);
-                intent.putExtra(App.Intents.SUBJECT_ID, subject.id());
-
-                startActivity(intent);
+                App.getInstance().getNavigator().navigateToQuestionPapers(this, subject.id());
                 break;
+
             case 1:
                 break;
         }
