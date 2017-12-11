@@ -20,8 +20,8 @@ import static com.ficture7.aasexplorer.util.ObjectUtil.checkNotNull;
 
 public class AppExplorerLoader extends ExplorerLoader {
 
-    private final Map<Subject, LoadResourcesAsyncTask> loadResourcesAsyncTaskMap;
-    private LoadSubjectsAsyncTask loadSubjectsAsyncTask;
+    private final Map<Subject, LoadResourcesAsyncTask> loadResourcesTasks;
+    private final LoadSubjectsAsyncTask loadSubjectsTask;
 
     private boolean autoSave;
 
@@ -34,58 +34,12 @@ public class AppExplorerLoader extends ExplorerLoader {
         super(explorer);
 
         status = Status.IDLE;
-        loadResourcesAsyncTaskMap = new HashMap<>();
+        loadSubjectsTask = new LoadSubjectsAsyncTask();
+        loadResourcesTasks = new HashMap<>();
     }
 
     public Status getStatus() {
         return status;
-    }
-
-    private void setStatus(Status status) {
-        setStatus(status, null);
-    }
-
-    private void setStatus(Status status, Exception exception) {
-        updateLoaderView(status, exception);
-    }
-
-    private void setError(Exception e) {
-        if (e == null) {
-            getLoaderView().getProgressView().setVisibility(View.VISIBLE);
-            getLoaderView().getErrorView().setVisibility(View.GONE);
-        } else {
-            getLoaderView().getProgressView().setVisibility(View.GONE);
-            getLoaderView().getErrorView().setVisibility(View.VISIBLE);
-
-            String message;
-            if (e instanceof DownloadException) {
-                message = "Error downloading data";
-            } else if (e instanceof ParseException) {
-                message = "Error parsing data";
-            } else {
-                message = "Unknown error";
-            }
-
-            switch (getStatus()) {
-                case LOADING_SUBJECTS_FROM_STORE:
-                    message += " when loading subjects from local store.";
-                    break;
-                case LOADING_SUBJECTS_FROM_CLIENTS:
-                    message += " when loading subjects from internet.";
-                    break;
-                case LOADING_RESOURCES_FROM_STORE:
-                    message += " when loading resources from local store.";
-                    break;
-                case LOADING_RESOURCES_FROM_CLIENTS:
-                    message += " when loading resources from internet.";
-                    break;
-                default:
-                    message += ".";
-                    break;
-            }
-
-            getLoaderView().getErrorView().setSubtitle(message);
-        }
     }
 
     public boolean getAutoSave() {
@@ -112,19 +66,15 @@ public class AppExplorerLoader extends ExplorerLoader {
     }
 
     public LoadSubjectsAsyncTask getLoadSubjectsAsyncTask() {
-        if (loadSubjectsAsyncTask == null) {
-            loadSubjectsAsyncTask = new LoadSubjectsAsyncTask();
-        }
-
-        return loadSubjectsAsyncTask;
+        return loadSubjectsTask;
     }
 
     public LoadResourcesAsyncTask getLoadResourcesAsyncTask(Subject subject) {
         // Look up if we already have a load resource task for this subject.
-        LoadResourcesAsyncTask task = loadResourcesAsyncTaskMap.get(subject);
+        LoadResourcesAsyncTask task = loadResourcesTasks.get(subject);
         if (task == null) {
             task = new LoadResourcesAsyncTask(subject);
-            loadResourcesAsyncTaskMap.put(subject, task);
+            loadResourcesTasks.put(subject, task);
         }
 
         return task;
@@ -133,12 +83,12 @@ public class AppExplorerLoader extends ExplorerLoader {
     @Override
     public <T extends Examination> Iterable<SubjectSource> loadSubjects(Class<T> examinationClass) throws Exception {
         checkNotNull(examinationClass, "examinationClass");
-        setStatus(Status.LOADING_SUBJECTS_FROM_STORE);
+        updateLoaderView(Status.LOADING_SUBJECTS_FROM_STORE, null);
 
         // Try to load from disk first.
         Iterable<SubjectSource> sources = loadSubjectsFromStore(examinationClass);
         if (sources == null) {
-            setStatus(Status.LOADING_SUBJECTS_FROM_CLIENTS);
+            updateLoaderView(Status.LOADING_SUBJECTS_FROM_CLIENTS, null);
             // Load from the internet if we can't for some reason.
             return loadSubjectsFromClients(examinationClass);
         }
@@ -146,7 +96,7 @@ public class AppExplorerLoader extends ExplorerLoader {
         Iterator<SubjectSource> iterator = sources.iterator();
         boolean empty = !iterator.hasNext();
         if (empty || hasExpired(iterator.next().date())) {
-            setStatus(Status.LOADING_SUBJECTS_FROM_CLIENTS);
+            updateLoaderView(Status.LOADING_SUBJECTS_FROM_CLIENTS, null);
 
             // Try to load from the internet if the sources are empty for some reason or
             // if stored data is considered expired.
@@ -166,20 +116,20 @@ public class AppExplorerLoader extends ExplorerLoader {
     @Override
     public Iterable<ResourceSource> loadResources(Subject subject) throws Exception {
         checkNotNull(subject, "subject");
-        setStatus(Status.LOADING_RESOURCES_FROM_STORE);
+        updateLoaderView(Status.LOADING_RESOURCES_FROM_STORE, null);
 
         //NOTE: Use the same loading strategy as loadSubjects().
 
         Iterable<ResourceSource> sources = loadResourcesFromStore(subject);
         if (sources == null) {
-            setStatus(Status.LOADING_RESOURCES_FROM_CLIENTS);
+            updateLoaderView(Status.LOADING_RESOURCES_FROM_CLIENTS, null);
             return loadResourcesFromClients(subject);
         }
 
         Iterator<ResourceSource> iterator = sources.iterator();
         boolean empty = !iterator.hasNext();
         if (empty || hasExpired(iterator.next().date())) {
-            setStatus(Status.LOADING_RESOURCES_FROM_CLIENTS);
+            updateLoaderView(Status.LOADING_RESOURCES_FROM_CLIENTS, null);
 
             try {
                 sources = loadResourcesFromClients(subject);
@@ -271,7 +221,7 @@ public class AppExplorerLoader extends ExplorerLoader {
                 loadCallback.onLoad();
             }
 
-            setStatus(AppExplorerLoader.Status.IDLE, exception);
+            updateLoaderView(AppExplorerLoader.Status.IDLE, exception);
         }
     }
 
@@ -282,7 +232,7 @@ public class AppExplorerLoader extends ExplorerLoader {
         }
 
         private Exception exception;
-        private Subject subject;
+        private final Subject subject;
 
         @Override
         protected Void doInBackground(Void... args) {
@@ -296,7 +246,7 @@ public class AppExplorerLoader extends ExplorerLoader {
 
         @Override
         protected void onPostExecute(Void args) {
-            setStatus(AppExplorerLoader.Status.IDLE, exception);
+            updateLoaderView(AppExplorerLoader.Status.IDLE, exception);
         }
     }
 
@@ -317,7 +267,36 @@ public class AppExplorerLoader extends ExplorerLoader {
         @Override
         public void run() {
             if (exception != null) {
-                setError(exception);
+                getLoaderView().getProgressView().setVisibility(View.GONE);
+                getLoaderView().getErrorView().setVisibility(View.VISIBLE);
+
+                String message;
+                if (exception instanceof DownloadException) {
+                    message = "Error downloading data";
+                } else if (exception instanceof ParseException) {
+                    message = "Error parsing data";
+                } else {
+                    message = "Unknown error";
+                }
+
+                switch (getStatus()) {
+                    case LOADING_SUBJECTS_FROM_STORE:
+                        message += " when loading subjects from local store";
+                        break;
+                    case LOADING_SUBJECTS_FROM_CLIENTS:
+                        message += " when loading subjects from internet";
+                        break;
+                    case LOADING_RESOURCES_FROM_STORE:
+                        message += " when loading resources from local store";
+                        break;
+                    case LOADING_RESOURCES_FROM_CLIENTS:
+                        message += " when loading resources from internet";
+                        break;
+                }
+
+                message += ".";
+
+                getLoaderView().getErrorView().setSubtitle(message);
                 AppExplorerLoader.this.status = status;
             } else {
                 AppExplorerLoader.this.status = status;
@@ -326,6 +305,8 @@ public class AppExplorerLoader extends ExplorerLoader {
                     getLoaderView().setVisibility(View.GONE);
                 } else {
                     getLoaderView().setVisibility(View.VISIBLE);
+                    getLoaderView().getProgressView().setVisibility(View.VISIBLE);
+                    getLoaderView().getErrorView().setVisibility(View.GONE);
                 }
 
                 switch (getStatus()) {
