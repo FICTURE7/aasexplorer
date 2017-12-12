@@ -9,40 +9,63 @@ import com.ficture7.aasexplorer.client.Client;
 import com.ficture7.aasexplorer.client.DownloadException;
 import com.ficture7.aasexplorer.client.ParseException;
 import com.ficture7.aasexplorer.model.ResourceSource;
+import com.ficture7.aasexplorer.model.Subject;
 import com.ficture7.aasexplorer.model.SubjectSource;
 import com.ficture7.aasexplorer.model.examination.Examination;
+import com.ficture7.aasexplorer.model.examination.MockExamination;
 
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class CsvStoreTest {
 
     @Test(expected = NullPointerException.class)
-    public void ctor__fileName_null__throwsException() {
+    public void ctor__explorer_null__throwsException() {
         new CsvStore(null);
     }
 
-
     @Test(expected = NullPointerException.class)
-    public void configure__null_name__throwsException() throws ExplorerBuilderException {
+    public void configure__null_directory__throwsException() {
         CsvStore store = new CsvStore(mock(Explorer.class));
         store.configure(null);
     }
 
     @Test
-    public void name__returns_ame() throws ExplorerBuilderException {
+    public void root__returns_root() {
         CsvStore store = new CsvStore(mock(Explorer.class));
         store.configure("test");
 
-        assertEquals("test", store.name());
+        assertEquals("test", store.root().getPath());
     }
 
     @Test
-    public void loadSubjects__loads_stored_subjects__returns_subject_sources() throws Exception {
+    public void loadSubjects__files_does_not_exists__returnsNull() throws Exception {
+        CsvStore store = new CsvStore(mock(Explorer.class));
+        store.configure("does-not-exists");
+
+        Iterable<SubjectSource> sources = store.loadSubjects(MockExamination.class);
+
+        assertNull(sources);
+    }
+
+    @Test
+    public void loadSubjects__empty__returns_null() throws Exception {
+        CsvStore store = new CsvStore(mock(Explorer.class));
+        store.configure("aasexplorer-core/src/test/resources/test-empty");
+
+        Iterable<SubjectSource> sources = store.loadSubjects(MockExamination.class);
+
+        assertNull(sources);
+    }
+
+    @Test
+    public void loadSubjects__returns_stored_subjects() throws Exception {
         int[] ids = {
                 1,
                 2,
@@ -88,15 +111,80 @@ public class CsvStoreTest {
         assertEquals(ids.length, i);
     }
 
-    public static class MockExamination extends Examination {
+    @Test
+    public void loadResources__files_does_not_exists__returns_null() throws Exception {
+        CsvStore store = new CsvStore(mock(Explorer.class));
+        store.configure("does-not-exists");
 
-        public MockExamination(Loader loader, Saver saver) {
-            super(loader, saver);
-        }
+        Iterable<ResourceSource> sources = store.loadResources(mock(Subject.class));
 
-        @Override
-        public String name() {
-            return null;
+        assertNull(sources);
+    }
+
+    @Test
+    public void loadResources__empty__returns_null() throws Exception {
+        CsvStore store = new CsvStore(mock(Explorer.class));
+        store.configure("aasexplorer-core/src/test/resources/test-empty");
+
+        Subject subject = mock(Subject.class);
+        when(subject.examination()).thenReturn(mock(Examination.class));
+
+        Iterable<ResourceSource> sources = store.loadResources(subject);
+
+        assertNull(sources);
+    }
+
+    @Test
+    public void loadResources__returns_stored_subjects() throws Exception {
+        String[] names = {
+                "1337_s06_ms_1",
+                "1337_s06_ms_2",
+                "1337_s06_ms_3",
+                "1337_s06_ms_4",
+                "1337_s06_ms_5",
+                "1337_s06_ms_6",
+                "1337_s06_ms_7",
+                "1337_s06_ms_8",
+                "1337_s06_ms_9",
+        };
+        String[] urls = {
+                "http://mock.com/1/1337_s06_ms_1",
+                "http://mock.com/1/1337_s06_ms_2",
+                "http://mock.com/1/1337_s06_ms_3",
+                "http://mock.com/1/1337_s06_ms_4",
+                "http://mock.com/1/1337_s06_ms_5",
+                "http://mock.com/1/1337_s06_ms_6",
+                "http://mock.com/1/1337_s06_ms_7",
+                "http://mock.com/1/1337_s06_ms_8",
+                "http://mock.com/1/1337_s06_ms_9",
+        };
+
+        Explorer explorer = new ExplorerBuilder()
+                .useStore(CsvStore.class, new ExplorerBuilder.Initializer<CsvStore>() {
+                    @Override
+                    public void init(CsvStore instance) {
+                        instance.configure("aasexplorer-core/src/test/resources/test");
+                    }
+                })
+                .withClient(MockClient.class)
+                .withExamination(MockExamination.class)
+                .build();
+
+        CsvStore store = (CsvStore) explorer.store();
+
+        Subject subject = mock(Subject.class);
+        when(subject.examination()).thenReturn(explorer.examinations().get(MockExamination.class));
+        when(subject.id()).thenReturn(1);
+
+        Iterable<ResourceSource> sources = store.loadResources(subject);
+        assertNotNull(sources);
+
+        int i = 0;
+        for (ResourceSource source : sources) {
+            assertEquals(names[i], source.name());
+            assertEquals(urls[i], source.uri().toString());
+            assertEquals(explorer.clients().get(MockClient.class), source.client());
+            i++;
         }
     }
 

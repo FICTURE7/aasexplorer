@@ -2,7 +2,6 @@ package com.ficture7.aasexplorer.view.activity;
 
 import android.app.ListActivity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
