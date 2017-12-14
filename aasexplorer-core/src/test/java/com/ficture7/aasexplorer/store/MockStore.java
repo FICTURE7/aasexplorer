@@ -18,7 +18,7 @@ public class MockStore extends Store {
     }
 
     @Override
-    public <T extends Examination> void saveResources(Class<T> examinationClass, Subject subject, Iterable<ResourceSource> resourceSources) throws Exception {
+    public void saveResources(Subject subject, Iterable<ResourceSource> resourceSources) throws Exception {
 
     }
 

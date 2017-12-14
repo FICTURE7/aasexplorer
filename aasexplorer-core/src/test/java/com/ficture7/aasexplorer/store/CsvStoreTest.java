@@ -265,7 +265,7 @@ public class CsvStoreTest {
         resourceSources.add(new ResourceSource(client, "test4", new Date(), URI.create("http://mock/test4.pdf")));
         resourceSources.add(new ResourceSource(client, "test5", new Date(), URI.create("http://mock/test5.pdf")));
 
-        store.saveResources(MockExamination.class, subject, resourceSources);
+        store.saveResources(subject, resourceSources);
 
         Iterable<ResourceSource> loadedResourceSources = store.loadResources(subject);
         int count = 0;

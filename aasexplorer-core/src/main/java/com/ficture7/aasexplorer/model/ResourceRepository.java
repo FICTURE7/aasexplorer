@@ -204,7 +204,7 @@ public class ResourceRepository implements Repository<String, Resource>, Iterabl
             }
         }
 
-        saver.saveResources(examinationClass, subject, resourceSources);
+        saver.saveResources(subject, resourceSources);
     }
 
     /**

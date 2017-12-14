@@ -41,7 +41,7 @@ public class ExplorerSaver implements Saver {
     }
 
     @Override
-    public <T extends Examination> void saveResources(Class<T> examinationClass, Subject subject, Iterable<ResourceSource> resourceSources) throws Exception {
-        explorer.store().saveResources(examinationClass, subject, resourceSources);
+    public void saveResources(Subject subject, Iterable<ResourceSource> resourceSources) throws Exception {
+        explorer.store().saveResources(subject, resourceSources);
     }
 }

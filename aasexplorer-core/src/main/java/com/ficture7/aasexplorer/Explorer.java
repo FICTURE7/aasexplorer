@@ -8,7 +8,6 @@ import com.ficture7.aasexplorer.store.Store;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.Map;
 
 import static com.ficture7.aasexplorer.util.ObjectUtil.checkNotNull;

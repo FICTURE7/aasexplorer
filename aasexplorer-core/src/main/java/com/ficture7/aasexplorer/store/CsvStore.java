@@ -6,7 +6,6 @@ import com.ficture7.aasexplorer.model.ResourceSource;
 import com.ficture7.aasexplorer.model.Subject;
 import com.ficture7.aasexplorer.model.SubjectSource;
 import com.ficture7.aasexplorer.model.examination.Examination;
-import com.ficture7.aasexplorer.util.ObjectUtil;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -14,13 +13,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Reader;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import sun.security.util.Length;
 
 import static com.ficture7.aasexplorer.util.ObjectUtil.checkNotNull;
 
@@ -44,7 +40,7 @@ public class CsvStore extends Store {
      * Constructs a new instance of the {@link CsvStore} class with the specified {@link Explorer}.
      *
      * @param explorer {@link Explorer} instance.
-     * @throws IllegalArgumentException {@code getExplorer} is null.
+     * @throws NullPointerException {@code explorer} is null.
      */
     public CsvStore(Explorer explorer) {
         super(explorer);
@@ -62,10 +58,10 @@ public class CsvStore extends Store {
     }
 
     /**
-     * Configures the {@link CsvStore} instance with the specified root root.
+     * Configures the {@link CsvStore} instance with the specified root directory.
      *
-     * @param directory 'Root' root.
-     * @throws IllegalArgumentException {@code root} is null.
+     * @param directory Root directory.
+     * @throws NullPointerException {@code root} is null.
      */
     public void configure(String directory) {
         checkNotNull(directory, "root");
@@ -99,7 +95,7 @@ public class CsvStore extends Store {
     }
 
     @Override
-    public <T extends Examination> void saveResources(Class<T> examinationClass, Subject subject, Iterable<ResourceSource> resourceSources) throws Exception {
+    public void saveResources(Subject subject, Iterable<ResourceSource> resourceSources) throws Exception {
         FileWriter fileWriter = new FileWriter(resourcesFile);
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
         CsvWriter csvWriter = new CsvWriter(bufferedWriter);
@@ -148,15 +144,19 @@ public class CsvStore extends Store {
         try {
             while (csvReader.nextRow()) {
                 String examination = csvReader.nextAsString();
-                // Exit early if the examination of the source is not the same
-                // as the queried one.
+                /*
+                    Exit early if the examination of the source is not the same
+                    as the queried one.
+                 */
                 if (!examination.contentEquals(queriedExamination)) {
                     continue;
                 }
 
                 Client client = getClient(csvReader.nextAsString());
-                // Exit early if the Explorer which owns this Store does not have
-                // a Client instance of the type of the source.
+                /*
+                    Exit early if the Explorer which owns this Store does not have
+                    a Client instance of the type of the source.
+                 */
                 if (client == null) {
                     continue;
                 }
@@ -173,7 +173,7 @@ public class CsvStore extends Store {
             bufferedReader.close();
         }
 
-        /* Return null if the sources list was empty. */
+        // Return null if the sources list was empty.
         if (sources.size() == 0) {
             return null;
         }
@@ -213,15 +213,19 @@ public class CsvStore extends Store {
                 }
 
                 String examination = csvReader.nextAsString();
-                // Exit early if the examination of the source is not the same
-                // as the queried one.
+                /*
+                    Exit early if the examination of the source is not the same
+                    as the queried one.
+                 */
                 if (!examination.contentEquals(queriedExamination)) {
                     continue;
                 }
 
                 Client client = getClient(csvReader.nextAsString());
-                // Exit early if the Explorer which owns this Store does not have
-                // a Client instance of the type of the source.
+                /*
+                    Exit early if the Explorer which owns this Store does not have
+                    a Client instance of the type of the source.
+                 */
                 if (client == null) {
                     continue;
                 }
@@ -237,7 +241,7 @@ public class CsvStore extends Store {
             bufferedReader.close();
         }
 
-        /* Return null if the sources list was empty. */
+        // Return null if the sources list was empty.
         if (sources.size() == 0) {
             return null;
         }
@@ -338,7 +342,7 @@ public class CsvStore extends Store {
             start = true;
         }
 
-        // Starts writing the next row.
+        /* Starts writing the next row. */
         public void writeNext() throws IOException {
             writer.write("\r\n");
             start = true;

@@ -15,6 +15,5 @@ public interface Saver {
 
     <T extends Examination> void saveSubjects(Class<T> examinationClass, Iterable<SubjectSource> subjectSources) throws Exception;
 
-    //TODO: Simplify the saveResources parameters since subject already has the examinationClass.
-    <T extends Examination> void saveResources(Class<T> examinationClass, Subject subject, Iterable<ResourceSource> resourceSources) throws Exception;
+    void saveResources(Subject subject, Iterable<ResourceSource> resourceSources) throws Exception;
 }
