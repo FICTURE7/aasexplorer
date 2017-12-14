@@ -75,21 +75,23 @@ public class CsvStore extends Store {
         resourcesFile = new File(directory + "-resources.csv");
     }
 
-    //TODO: Optimize by doing manual reading and stuff.
-
     @Override
     public <T extends Examination> void saveSubjects(Class<T> examinationClass, Iterable<SubjectSource> subjectSources) throws Exception {
         FileWriter fileWriter = new FileWriter(subjectsFile);
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+        CsvWriter csvWriter = new CsvWriter(bufferedWriter);
+
+        String examination = examinationClass.getName();
 
         try {
             for (SubjectSource source : subjectSources) {
-                bufferedWriter.append(examinationClass.getName()).append(',');
-                bufferedWriter.append(source.client().getClass().getName()).append(',');
-                bufferedWriter.append(String.valueOf(source.id())).append(',');
-                bufferedWriter.append(source.name()).append(',');
-                bufferedWriter.append(String.valueOf(source.date().getTime())).append(',');
-                bufferedWriter.append(source.uri().toString()).append("\r\n");
+                csvWriter.writeNext(examination);
+                csvWriter.writeNext(source.client().getClass().getName());
+                csvWriter.writeNext(source.id());
+                csvWriter.writeNext(source.name());
+                csvWriter.writeNext(source.date());
+                csvWriter.writeNext(source.uri());
+                csvWriter.writeNext();
             }
         } finally {
             bufferedWriter.close();
@@ -100,15 +102,19 @@ public class CsvStore extends Store {
     public <T extends Examination> void saveResources(Class<T> examinationClass, Subject subject, Iterable<ResourceSource> resourceSources) throws Exception {
         FileWriter fileWriter = new FileWriter(resourcesFile);
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+        CsvWriter csvWriter = new CsvWriter(bufferedWriter);
+
+        String examination = subject.examination().getClass().getName();
 
         try {
             for (ResourceSource source : resourceSources) {
-                bufferedWriter.append(examinationClass.getName()).append(',');
-                bufferedWriter.append(source.client().getClass().getName()).append(',');
-                bufferedWriter.append(String.valueOf(subject.id())).append(',');
-                bufferedWriter.append(source.name()).append(',');
-                bufferedWriter.append(String.valueOf(source.date().getTime())).append(',');
-                bufferedWriter.append(source.uri().toString()).append("\r\n");
+                csvWriter.writeNext(subject.id());
+                csvWriter.writeNext(examination);
+                csvWriter.writeNext(source.client().getClass().getName());
+                csvWriter.writeNext(source.name());
+                csvWriter.writeNext(source.date());
+                csvWriter.writeNext(source.uri());
+                csvWriter.writeNext();
             }
         } finally {
             bufferedWriter.close();
@@ -239,10 +245,11 @@ public class CsvStore extends Store {
         return sources;
     }
 
-    /* Provides methods to read .csv files.
-     *
-     * NOTE: It does not support quoted strings and does not
-     * necessarily use '\r\n' line endings. (Uses BufferedReader.readLine())
+    /*
+        Provides methods to read .csv files.
+
+        NOTE: It does not support quoted strings and does not
+        necessarily use '\r\n' line endings. (Uses BufferedReader.readLine())
      */
     private static final class CsvReader {
 
@@ -306,14 +313,57 @@ public class CsvStore extends Store {
             while (row.charAt(end) != ',' && ++end < rowLength);
         }
 
-        /* Returns the current value as a string. */
+        /* Returns the current value/cell as a string. */
         private String asString() {
             return row.substring(start, end);
         }
 
-        /* Returns the current value as an integer. */
+        /* Returns the current value/cell as an integer. */
         private int asInt() {
             return Integer.parseInt(asString());
+        }
+    }
+
+    /*
+        Provides methods to write .csv files.
+     */
+    private static final class CsvWriter {
+
+        // Tracks if the writer is at the start of a row.
+        private boolean start;
+        private final BufferedWriter writer;
+
+        public CsvWriter(BufferedWriter writer ){
+            this.writer = checkNotNull(writer, "writer");
+            start = true;
+        }
+
+        // Starts writing the next row.
+        public void writeNext() throws IOException {
+            writer.write("\r\n");
+            start = true;
+        }
+
+        public void writeNext(String value) throws IOException {
+            if (!start) {
+                writer.write(',');
+            }
+            writer.write(value);
+            start = false;
+        }
+
+        public void writeNext(int value) throws IOException {
+            writeNext(String.valueOf(value));
+        }
+
+        public void writeNext(Date date) throws IOException {
+            long timestamp = date.getTime();
+            writeNext(String.valueOf(timestamp));
+        }
+
+        public void writeNext(URI uri) throws IOException {
+            String uriString = uri.toString();
+            writeNext(uriString);
         }
     }
 }
