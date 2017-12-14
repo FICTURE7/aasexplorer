@@ -43,7 +43,7 @@ public class Subject {
         this.name = checkNotNull(name, "name");
         this.id = id;
 
-        resources = new ResourceRepository(this, examination, loader, saver);
+        resources = new ResourceRepository(this, loader, saver);
         sources = new Source.List<>();
     }
 

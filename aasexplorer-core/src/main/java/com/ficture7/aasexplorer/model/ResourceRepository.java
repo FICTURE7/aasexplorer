@@ -43,8 +43,6 @@ public class ResourceRepository implements Repository<String, Resource>, Iterabl
     private final Collection<QuestionPaper> readOnlyQuestionPapers;
     private final Collection<Resource> readOnlyOthers;
 
-    private final Class<? extends Examination> examinationClass;
-
     /**
      * Constructs a new instance of th e{@link ResourceRepository} with the specified {@link Subject}
      * instance which owns this {@link ResourceRepository}, {@link Loader} and {@link Saver}.
@@ -53,13 +51,13 @@ public class ResourceRepository implements Repository<String, Resource>, Iterabl
      * @param loader  {@link Loader} instance.
      * @param saver   {@link Saver} instance.
      * @throws NullPointerException {@code subject} is null.
+     * @throws NullPointerException {@code loader} is null.
+     * @throws NullPointerException {@code saver} is null.
      */
-    ResourceRepository(Subject subject, Examination examination, Loader loader, Saver saver) {
+    ResourceRepository(Subject subject, Loader loader, Saver saver) {
         this.subject = checkNotNull(subject, "subject");
         this.loader = checkNotNull(loader, "loader");
         this.saver = checkNotNull(saver, "saver");
-
-        examinationClass = checkNotNull(examination, "examination").getClass();
 
         resources = new HashMap<>();
 
