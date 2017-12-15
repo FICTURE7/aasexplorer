@@ -20,6 +20,8 @@ import com.ficture7.aasexplorer.R;
 import com.ficture7.aasexplorer.model.QuestionPaper;
 import com.ficture7.aasexplorer.model.Subject;
 
+import java.util.Comparator;
+
 public class QuestionPaperListActivity extends ListActivity {
 
     private Subject subject;
@@ -50,6 +52,33 @@ public class QuestionPaperListActivity extends ListActivity {
         for (QuestionPaper qp : subject.resources().questionPapers()) {
             adapter.add(qp);
         }
+
+        adapter.sort(new Comparator<QuestionPaper>() {
+
+            @Override
+            public int compare(QuestionPaper a, QuestionPaper b) {
+                return sum(b) - sum(a);
+            }
+
+            private int sum(QuestionPaper qp) {
+                int season = 0;
+                switch (qp.session().season()) {
+                    case SUMMER:
+                        season = 1;
+                        break;
+                    case WINTER:
+                        season = 2;
+                        break;
+                }
+
+                int number = qp.number();
+                if (number < 10) {
+                    number = number * 10;
+                }
+
+                return (qp.session().year() * 1000) + (season * 100) + number;
+            }
+        });
     }
 
     @Override
