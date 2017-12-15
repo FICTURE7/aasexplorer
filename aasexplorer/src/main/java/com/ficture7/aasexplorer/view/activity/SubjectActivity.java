@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -18,7 +19,6 @@ import com.ficture7.aasexplorer.view.LoaderView;
 public class SubjectActivity extends ListActivity {
 
     private Subject subject;
-    private ArrayAdapter<String> entries;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +34,7 @@ public class SubjectActivity extends ListActivity {
             if (actionBar != null) {
                 actionBar.setTitle(subject.name());
                 actionBar.setSubtitle(String.valueOf(subject.id()));
+                actionBar.setDisplayHomeAsUpEnabled(true);
             }
 
             this.subject = subject;
@@ -44,7 +45,7 @@ public class SubjectActivity extends ListActivity {
             loader.getLoadResourcesAsyncTask(subject).execute();
         }
 
-        entries = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
+        ArrayAdapter<String> entries = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
         entries.add(getString(R.string.title_question_papers));
         entries.add(getString(R.string.title_marking_schemes));
 
@@ -64,6 +65,18 @@ public class SubjectActivity extends ListActivity {
 
             case 1:
                 break;
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }
