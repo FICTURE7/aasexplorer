@@ -2,9 +2,6 @@ package com.ficture7.aasexplorer.store;
 
 import com.ficture7.aasexplorer.Explorer;
 import com.ficture7.aasexplorer.ExplorerBuilder;
-import com.ficture7.aasexplorer.ExplorerBuilderException;
-import com.ficture7.aasexplorer.Loader;
-import com.ficture7.aasexplorer.Saver;
 import com.ficture7.aasexplorer.client.Client;
 import com.ficture7.aasexplorer.client.DownloadException;
 import com.ficture7.aasexplorer.client.ParseException;
@@ -45,9 +42,9 @@ public class CsvStoreTest {
     @Test
     public void root__returns_root() {
         CsvStore store = new CsvStore(mock(Explorer.class));
-        store.configure("test");
+        store.configure("aasexplorer-core/build/resources/test/test-saving");
 
-        assertEquals("test", store.root().getPath());
+        assertEquals("aasexplorer-core\\build\\resources\\test\\test-saving", store.root().getPath());
     }
 
     @Test
@@ -92,7 +89,7 @@ public class CsvStoreTest {
                 .useStore(CsvStore.class, new ExplorerBuilder.Initializer<CsvStore>() {
                     @Override
                     public void init(CsvStore instance) {
-                        instance.configure("aasexplorer-core/src/test/resources/test");
+                        instance.configure("aasexplorer-core/src/test/resources/test-csv/");
                     }
                 })
                 .withClient(MockClient.class)
@@ -122,7 +119,10 @@ public class CsvStoreTest {
         CsvStore store = new CsvStore(mock(Explorer.class));
         store.configure("does-not-exists");
 
-        Iterable<ResourceSource> sources = store.loadResources(mock(Subject.class));
+        Subject subject = mock(Subject.class);
+        when(subject.examination()).thenReturn(mock(Examination.class));
+
+        Iterable<ResourceSource> sources = store.loadResources(subject);
 
         assertNull(sources);
     }
@@ -169,7 +169,7 @@ public class CsvStoreTest {
                 .useStore(CsvStore.class, new ExplorerBuilder.Initializer<CsvStore>() {
                     @Override
                     public void init(CsvStore instance) {
-                        instance.configure("aasexplorer-core/src/test/resources/test");
+                        instance.configure("aasexplorer-core/src/test/resources/test-csv");
                     }
                 })
                 .withClient(MockClient.class)
@@ -252,6 +252,7 @@ public class CsvStoreTest {
                 .build();
 
         Subject subject = mock(Subject.class);
+        when(subject.id()).thenReturn(1);
         when(subject.examination()).thenReturn(explorer.examinations().get(MockExamination.class));
 
         CsvStore store = (CsvStore) explorer.store();

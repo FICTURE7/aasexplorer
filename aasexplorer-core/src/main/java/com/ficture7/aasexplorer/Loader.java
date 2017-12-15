@@ -23,6 +23,8 @@ public interface Loader {
      */
     <T extends Examination> Iterable<SubjectSource> loadSubjects(Class<T> examinationClass) throws Exception;
 
+    //TODO: Further clean up parameters to use (Class<? extends Examination> examination, int subjectId)
+
     /**
      * Loads the {@link ResourceSource}s for the specified {@link Subject} instance.
      *

@@ -16,7 +16,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.ficture7.aasexplorer.util.ObjectUtil.checkNotNull;
 
@@ -29,12 +31,13 @@ public class CsvStore extends Store {
 
     //TODO: Version handling?
 
-    // Root root of the files.
-    private File root;
-    // File we're going to read and write subject sources to.
-    private File subjectsFile;
-    // File we're going to read and write resource sources to.
-    private File resourcesFile;
+    // Root directory of the files.
+    private File rootDir;
+
+    // Map mapping Class<? extends Examination> to their respective directory.
+    private final Map<Class<? extends Examination>, File> examinationsDirs;
+    // Determine if the Store has been configured.
+    private boolean configured;
 
     /**
      * Constructs a new instance of the {@link CsvStore} class with the specified {@link Explorer}.
@@ -45,7 +48,7 @@ public class CsvStore extends Store {
     public CsvStore(Explorer explorer) {
         super(explorer);
 
-        configure("default");
+        examinationsDirs = new HashMap<>();
     }
 
     /**
@@ -54,34 +57,98 @@ public class CsvStore extends Store {
      * @return Root directory of the {@link CsvStore}.
      */
     public File root() {
-        return root;
+        return rootDir;
     }
 
     /**
      * Configures the {@link CsvStore} instance with the specified root directory.
      *
-     * @param directory Root directory.
-     * @throws NullPointerException {@code root} is null.
+     * @param directoryPath Root directory.
+     * @throws NullPointerException     {@code directoryPath} is null.
+     * @throws IllegalArgumentException {@code directoryPath} is not a directory.
      */
-    public void configure(String directory) {
-        checkNotNull(directory, "root");
-        this.root = new File(directory);
+    public void configure(String directoryPath) {
+        checkNotNull(directoryPath, "directoryPath");
+        if (configured) {
+            throw new IllegalStateException("CsvStore instance was already configured.");
+        }
 
-        subjectsFile = new File(directory + "-subjects.csv");
-        resourcesFile = new File(directory + "-resources.csv");
+        rootDir = new File(directoryPath);
+
+        /*
+            Checks if the specified path exists and is a directory.
+            If it does not exists, we create it. If its not a directory we
+            throw an Exception.
+         */
+        if (rootDir.exists()) {
+            if (!rootDir.isDirectory()) {
+                throw new IllegalArgumentException("Specified path: " + directoryPath + ", is not a directory");
+            }
+
+            File[] files = rootDir.listFiles();
+            if (files == null) {
+                return;
+            }
+
+            /*
+                Iterate through the sub directories of the root directory
+                to look for examination directories.
+             */
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    String examinationClassName = file.getName();
+                    Class<?> examinationClass;
+
+                    /*
+                        Try to get the Class<? extends Examination> instance from the
+                        name of the class.
+                     */
+                    try {
+                        examinationClass = Class.forName(examinationClassName);
+                        // Make sure its an Examination class & castable.
+                        if (examinationClass.getSuperclass() != Examination.class) {
+                            continue;
+                        }
+                    } catch (ClassNotFoundException e) {
+                        // We move on with life if a Class with the directory name does not exists.
+                        continue;
+                    }
+
+                    // Map the Class instance to the directory.
+                    examinationsDirs.put((Class<? extends Examination>) examinationClass, file);
+                }
+            }
+        } else {
+            if (!rootDir.mkdir()) {
+                throw new IllegalStateException("Unable to create directory.");
+            }
+        }
+
+        configured = true;
     }
 
     @Override
     public <T extends Examination> void saveSubjects(Class<T> examinationClass, Iterable<SubjectSource> subjectSources) throws Exception {
+        if (!configured) {
+            throw new IllegalStateException("CsvStore has not been configured.");
+        }
+
+        File examinationDir = examinationsDirs.get(examinationClass);
+        if (examinationDir == null) {
+            examinationDir = new File(rootDir, examinationClass.getName());
+            examinationDir.mkdir();
+
+            examinationsDirs.put(examinationClass, examinationDir);
+        }
+
+        File subjectsFile = new File(examinationDir, "subjects.csv");
+
         FileWriter fileWriter = new FileWriter(subjectsFile);
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
         CsvWriter csvWriter = new CsvWriter(bufferedWriter);
 
-        String examination = examinationClass.getName();
-
         try {
             for (SubjectSource source : subjectSources) {
-                csvWriter.writeNext(examination);
                 csvWriter.writeNext(source.client().getClass().getName());
                 csvWriter.writeNext(source.id());
                 csvWriter.writeNext(source.name());
@@ -96,16 +163,32 @@ public class CsvStore extends Store {
 
     @Override
     public void saveResources(Subject subject, Iterable<ResourceSource> resourceSources) throws Exception {
+        if (!configured) {
+            throw new IllegalStateException("CsvStore has not been configured.");
+        }
+
+        Class<? extends Examination> examinationClass = subject.examination().getClass();
+
+        File examinationDir = examinationsDirs.get(examinationClass);
+        if (examinationDir == null) {
+            examinationDir = new File(rootDir, examinationClass.getName());
+            examinationDir.mkdir();
+
+            examinationsDirs.put(examinationClass, examinationDir);
+        }
+
+        File resourcesDir = new File(examinationDir, "resources");
+        if (!resourcesDir.exists()) {
+            resourcesDir.mkdir();
+        }
+
+        File resourcesFile = new File(resourcesDir, subject.id() + ".csv");
         FileWriter fileWriter = new FileWriter(resourcesFile);
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
         CsvWriter csvWriter = new CsvWriter(bufferedWriter);
 
-        String examination = subject.examination().getClass().getName();
-
         try {
             for (ResourceSource source : resourceSources) {
-                csvWriter.writeNext(subject.id());
-                csvWriter.writeNext(examination);
                 csvWriter.writeNext(source.client().getClass().getName());
                 csvWriter.writeNext(source.name());
                 csvWriter.writeNext(source.date());
@@ -127,6 +210,30 @@ public class CsvStore extends Store {
      */
     @Override
     public <T extends Examination> Iterable<SubjectSource> loadSubjects(Class<T> examinationClass) throws Exception {
+        if (!configured) {
+            throw new IllegalStateException("CsvStore has not been configured.");
+        }
+
+        /*
+            Get the directory of the examination from the Class<? extends Examination> -> File map.
+            If it does not exists in the map, we exit early and return null.
+         */
+        File examinationDir = examinationsDirs.get(examinationClass);
+        if (examinationDir == null) {
+            return null;
+        }
+
+        /*
+            Directory structure is something like this:
+
+            /{root}/{full identified of examination class}/subjects.csv
+            -->->
+            /{rootDir}/{examinationDir}/subjects.csv
+
+            Get the file which contains the subjects of examination.
+            Exit early and return null, if the file does not exists.
+         */
+        File subjectsFile = new File(examinationDir, "subjects.csv");
         if (!subjectsFile.exists()) {
             return null;
         }
@@ -138,20 +245,8 @@ public class CsvStore extends Store {
         // List of sources for the examination type.
         List<SubjectSource> sources = new ArrayList<>();
 
-        // Class name of the Examination specified.
-        String queriedExamination = examinationClass.getName();
-
         try {
             while (csvReader.nextRow()) {
-                String examination = csvReader.nextAsString();
-                /*
-                    Exit early if the examination of the source is not the same
-                    as the queried one.
-                 */
-                if (!examination.contentEquals(queriedExamination)) {
-                    continue;
-                }
-
                 Client client = getClient(csvReader.nextAsString());
                 /*
                     Exit early if the Explorer which owns this Store does not have
@@ -190,6 +285,41 @@ public class CsvStore extends Store {
      */
     @Override
     public Iterable<ResourceSource> loadResources(Subject subject) throws Exception {
+        if (!configured) {
+            throw new IllegalStateException("CsvStore has not been configured.");
+        }
+
+        Class<? extends Examination> examinationClass = subject.examination().getClass();
+
+        /*
+            Get the directory of the examination from the Class<? extends Examination> -> File map.
+            If it does not exists in the map, we exit early and return null.
+         */
+        File examinationDir = examinationsDirs.get(examinationClass);
+        if (examinationDir == null) {
+            return null;
+        }
+
+        /*
+            Directory structure is something like this:
+
+            /{root}/{full identifier of examination class}/resources/
+            -->->
+            /{rootDir}/{examinationDir}/resources/
+
+            Get the directory which contains the resources of the subjects.
+            Exit early if it does not exists and return null.
+         */
+        File resourcesDir = new File(examinationDir, "resources");
+        if (!resourcesDir.exists()) {
+            return null;
+        }
+
+        /*
+            Get the .csv file which contains the resource sources.
+            Exit early if it does exists and return null.
+         */
+        File resourcesFile = new File(resourcesDir, subject.id() + ".csv");
         if (!resourcesFile.exists()) {
             return null;
         }
@@ -201,26 +331,8 @@ public class CsvStore extends Store {
         // List of resource source for the subject.
         List<ResourceSource> sources = new ArrayList<>();
 
-        // Class name of the Examination specified.
-        String queriedExamination = subject.examination().getClass().getName();
-
         try {
             while (csvReader.nextRow()) {
-                int id = csvReader.nextAsInt();
-                // Exit early if the subject ID differs.
-                if (id != subject.id()) {
-                    continue;
-                }
-
-                String examination = csvReader.nextAsString();
-                /*
-                    Exit early if the examination of the source is not the same
-                    as the queried one.
-                 */
-                if (!examination.contentEquals(queriedExamination)) {
-                    continue;
-                }
-
                 Client client = getClient(csvReader.nextAsString());
                 /*
                     Exit early if the Explorer which owns this Store does not have
@@ -314,7 +426,7 @@ public class CsvStore extends Store {
             }
 
             /* Iterate through the characters until we hit a ',' or the end of the line. */
-            while (row.charAt(end) != ',' && ++end < rowLength);
+            while (row.charAt(end) != ',' && ++end < rowLength) ;
         }
 
         /* Returns the current value/cell as a string. */
@@ -337,7 +449,7 @@ public class CsvStore extends Store {
         private boolean start;
         private final BufferedWriter writer;
 
-        public CsvWriter(BufferedWriter writer ){
+        public CsvWriter(BufferedWriter writer) {
             this.writer = checkNotNull(writer, "writer");
             start = true;
         }
