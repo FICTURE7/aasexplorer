@@ -29,7 +29,8 @@
 
         <activity android:name=".view.activity.SubjectActivity">
         </activity>
-        <activity android:name=".view.activity.QuestionPaperListActivity">
+        <activity android:name=".view.activity.QuestionPaperListActivity"
+            android:label="Question Papers">
         </activity>
     </application>
 

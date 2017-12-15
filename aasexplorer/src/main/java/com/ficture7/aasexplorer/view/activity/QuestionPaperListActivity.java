@@ -1,11 +1,13 @@
 package com.ficture7.aasexplorer.view.activity;
 
+import android.app.ActionBar;
 import android.app.DownloadManager;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -36,6 +38,12 @@ public class QuestionPaperListActivity extends ListActivity {
             subject = explorer.alevel().subjects().get(id);
         }
 
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            actionBar.setSubtitle(String.valueOf(subject.id()));
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
         setContentView(R.layout.activity_question_papers);
         setListAdapter(adapter);
 
@@ -57,6 +65,18 @@ public class QuestionPaperListActivity extends ListActivity {
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     public class QuestionPaperAdapter extends ArrayAdapter<QuestionPaper>{
 
         public QuestionPaperAdapter(Context context) {
@@ -71,6 +91,8 @@ public class QuestionPaperListActivity extends ListActivity {
 
                 holder = new ViewHolder();
                 holder.nameLbl = convertView.findViewById(R.id.text_question_paper_name);
+                holder.seasonLbl = convertView.findViewById(R.id.text_question_paper_season);
+                holder.yearLbl = convertView.findViewById(R.id.text_question_paper_year);
 
                 convertView.setTag(holder);
             } else {
@@ -79,18 +101,21 @@ public class QuestionPaperListActivity extends ListActivity {
 
             QuestionPaper questionPaper = getItem(position);
             if (questionPaper != null) {
-                String season = "";
+                String name = "Paper " + questionPaper.number();
+                String season = "Unk";
                 switch (questionPaper.session().season()) {
                     case SUMMER:
-                        season = " Summer";
+                        season = "May/June";
                         break;
                     case WINTER:
-                        season = " Winter";
+                        season = "Nov/Oct";
                         break;
                 }
-                String name = "Paper " + questionPaper.number() + " - " + questionPaper.session().year() + season;
+                String year = String.valueOf(questionPaper.session().year());
 
                 holder.nameLbl.setText(name);
+                holder.seasonLbl.setText(season);
+                holder.yearLbl.setText(year);
             }
 
             return convertView;
@@ -100,5 +125,7 @@ public class QuestionPaperListActivity extends ListActivity {
 
     private static class ViewHolder {
         public TextView nameLbl;
+        public TextView seasonLbl;
+        public TextView yearLbl;
     }
 }
