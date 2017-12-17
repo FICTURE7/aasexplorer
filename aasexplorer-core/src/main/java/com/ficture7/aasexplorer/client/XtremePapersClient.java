@@ -26,6 +26,16 @@ public class XtremePapersClient extends HttpClient {
     static final URI ALEVEL_ROOT_URI = URI.create("http://papers.xtremepapers.com/CIE/Cambridge%20International%20A%20and%20AS%20Level/");
 
     /**
+     * Returns the name of the {@link Client}.
+     *
+     * @return Name of the {@link Client}.
+     */
+    @Override
+    public String name() {
+        return "xtremepapers.com";
+    }
+
+    /**
      * Retrieves the {@link SubjectSource}s of the specified {@link Examination} type.
      *
      * @param examinationClass {@link Examination} class.

@@ -12,6 +12,13 @@ import com.ficture7.aasexplorer.model.examination.Examination;
 public interface Client {
 
     /**
+     * Returns the name of the {@link Client}.
+     *
+     * @return Name of the {@link Client}.
+     */
+    String name();
+
+    /**
      * Retrieves the {@link SubjectSource}s of the specified {@link Examination} type.
      *
      * @param examinationClass {@link Examination} class.

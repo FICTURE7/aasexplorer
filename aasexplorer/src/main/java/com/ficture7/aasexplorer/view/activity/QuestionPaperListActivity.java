@@ -1,9 +1,12 @@
 package com.ficture7.aasexplorer.view.activity;
 
 import android.app.ActionBar;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.DownloadManager;
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,11 +16,14 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ficture7.aasexplorer.App;
 import com.ficture7.aasexplorer.Explorer;
 import com.ficture7.aasexplorer.R;
+import com.ficture7.aasexplorer.client.Client;
 import com.ficture7.aasexplorer.model.QuestionPaper;
+import com.ficture7.aasexplorer.model.ResourceSource;
 import com.ficture7.aasexplorer.model.Subject;
 
 import java.util.Comparator;
@@ -85,18 +91,22 @@ public class QuestionPaperListActivity extends ListActivity {
     protected void onListItemClick(ListView l, View v, int position, long id) {
         QuestionPaper qp = adapter.getItem(position);
         if (qp != null) {
-            Uri uri = Uri.parse(qp.sources().iterator().next().uri().toString());
-            DownloadManager.Request request = new DownloadManager.Request(uri);
-            request.setTitle(qp.name());
-
-            DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
-            manager.enqueue(request);
+            /*
+                If we have more than 1 source for the same resource we
+                give the user the option of choosing where to download it.
+                Otherwise we download it from the first source.
+             */
+            if (qp.sources().size() > 1) {
+                createDownloadDialog(qp).show();
+            } else {
+                download(qp.sources().iterator().next());
+            }
         }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
                 return true;
@@ -106,7 +116,41 @@ public class QuestionPaperListActivity extends ListActivity {
         }
     }
 
-    public class QuestionPaperAdapter extends ArrayAdapter<QuestionPaper>{
+    private Dialog createDownloadDialog(QuestionPaper questionPaper) {
+        final ResourceSource[] sources = new ResourceSource[questionPaper.sources().size()];
+        String[] clientNames = new String[questionPaper.sources().size()];
+        int index = 0;
+        for (ResourceSource source : questionPaper.sources()) {
+            sources[index] = source;
+            clientNames[index] = source.client().name();
+            index++;
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Download")
+               .setItems(clientNames, new DialogInterface.OnClickListener() {
+                   @Override
+                   public void onClick(DialogInterface dialogInterface, int which) {
+                       download(sources[which]);
+                   }
+               });
+        return builder.create();
+    }
+
+    private void download(ResourceSource source) {
+        Uri uri = Uri.parse(source.uri().toString());
+        DownloadManager.Request request = new DownloadManager.Request(uri);
+        request.setTitle(source.name());
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setDescription("Downloading resource from " + source.client().name());
+
+        DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+        manager.enqueue(request);
+
+        Toast.makeText(QuestionPaperListActivity.this, "Downloading " + source.name() + "...", Toast.LENGTH_LONG).show();
+    }
+
+    public class QuestionPaperAdapter extends ArrayAdapter<QuestionPaper> {
 
         public QuestionPaperAdapter(Context context) {
             super(context, R.layout.item_question_paper);

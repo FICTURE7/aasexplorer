@@ -29,6 +29,17 @@ public class GceGuideClient extends HttpClient {
 
     //TODO: Merge table parsing logic into a single method or something.
 
+
+    /**
+     * Returns the name of the {@link Client}.
+     *
+     * @return Name of the {@link Client}.
+     */
+    @Override
+    public String name() {
+        return "gceguide.xyz";
+    }
+
     /**
      * Retrieves the {@link SubjectSource}s of the specified {@link Examination} type.
      *
