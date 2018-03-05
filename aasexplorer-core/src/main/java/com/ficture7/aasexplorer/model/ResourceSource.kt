@@ -21,10 +21,6 @@ class ResourceSource : Source {
      * @param name   Resource name.
      * @param date   [Date] when the source was acquired.
      * @param uri    [URI] pointing to the source.
-     * @throws NullPointerException `client` is null.
-     * @throws NullPointerException `name` is null.
-     * @throws NullPointerException `date` is null.
-     * @throws NullPointerException `URI` is null.
      */
     constructor(client: Client, name: String, date: Date, uri: URI) {
         this.client = client

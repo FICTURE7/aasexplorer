@@ -240,11 +240,6 @@ public class ExplorerBuilderTest {
             // private constructor to cause an error.
         }
 
-        @Override
-        public String name() {
-            return "mock which causes a error when Examinations tries to create a new instance.";
-        }
-
         @NotNull
         @Override
         public String getName() {
@@ -255,11 +250,6 @@ public class ExplorerBuilderTest {
     private static class MockExamination extends Examination {
         public MockExamination(Loader loader, Saver saver) {
             super(loader, saver);
-        }
-
-        @Override
-        public String name() {
-            return "mock";
         }
 
         @NotNull

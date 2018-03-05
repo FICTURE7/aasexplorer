@@ -64,6 +64,7 @@ class Session {
          * @return [Session] instance representing the specified session string.
          * @throws IllegalArgumentException `value` is null or is not 3 characters long.
          */
+        @JvmStatic
         fun parse(value: String): Session {
             ObjectUtil.checkNotNull(value, "value")
 

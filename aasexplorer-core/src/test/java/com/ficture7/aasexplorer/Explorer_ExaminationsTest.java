@@ -77,11 +77,6 @@ public class Explorer_ExaminationsTest {
             super(loader, saver);
         }
 
-        @Override
-        public String name() {
-            return "mock";
-        }
-
         @NotNull
         @Override
         public String getName() {
