@@ -16,7 +16,7 @@ public class QuestionPaperTest {
         Session session = new Session(Session.Season.SUMMER, 10);
         QuestionPaper qp = new QuestionPaper("a", session, 1);
 
-        assertSame(session, qp.session());
+        assertSame(session, qp.getSession());
     }
 
     @Test
@@ -24,6 +24,6 @@ public class QuestionPaperTest {
         Session session = new Session(Session.Season.SUMMER, 10);
         QuestionPaper qp = new QuestionPaper("a", session, 1);
 
-        assertSame(1, qp.number());
+        assertSame(1, qp.getNumber());
     }
 }

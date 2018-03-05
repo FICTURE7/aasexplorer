@@ -3,7 +3,6 @@ package com.ficture7.aasexplorer;
 import android.app.Application;
 
 import com.ficture7.aasexplorer.client.GceGuideClient;
-import com.ficture7.aasexplorer.client.XtremePapersClient;
 import com.ficture7.aasexplorer.model.examination.ALevelExamination;
 import com.ficture7.aasexplorer.store.CsvStore;
 
@@ -48,30 +47,19 @@ public class App extends Application {
         // Construct a new instance of the Explorer instance.
         try {
             explorer = new ExplorerBuilder()
-                    .useStore(CsvStore.class, new ExplorerBuilder.Initializer<CsvStore>() {
-                        @Override
-                        public void init(CsvStore instance) {
-                            // Configure the store to use the internal storage of the device.
-                            String path = getApplicationContext().getFilesDir().getAbsolutePath() + "/data";
+                    .useStore(CsvStore.class, instance -> {
+                        // Configure the getStore to use the internal storage of the device.
+                        String path = getApplicationContext().getFilesDir().getAbsolutePath() + "/data";
 
-                            instance.configure(path);
-                        }
+                        instance.configure(path);
                     })
-                    .useLoader(AppExplorerLoader.class, new ExplorerBuilder.Initializer<AppExplorerLoader>() {
-                        @Override
-                        public void init(AppExplorerLoader instance) {
-                            explorerLoader = instance;
-                            // Enable auto save to save every-time something is loaded from the store.
-                            explorerLoader.setAutoSave(true);
-                            explorerLoader.setDaysBeforeExpiration(7);
-                        }
+                    .useLoader(AppExplorerLoader.class, instance -> {
+                        explorerLoader = instance;
+                        // Enable auto save to save every-time something is loaded from the getStore.
+                        explorerLoader.setAutoSave(true);
+                        explorerLoader.setDaysBeforeExpiration(7);
                     })
-                    .useSaver(AppExplorerSaver.class, new ExplorerBuilder.Initializer<AppExplorerSaver>() {
-                        @Override
-                        public void init(AppExplorerSaver instance) {
-                            explorerSaver = instance;
-                        }
-                    })
+                    .useSaver(AppExplorerSaver.class, instance -> explorerSaver = instance)
                     .withClient(GceGuideClient.class)
                     .withClient(XtremePapersClient.class)
                     .withExamination(ALevelExamination.class)
@@ -95,7 +83,8 @@ public class App extends Application {
 
     public static final class Intents {
         public static final String BASE = "com.ficture7.aasexplorer.";
+        public static final String EXTRA_BASE = BASE + "extras.";
 
-        public static final String SUBJECT_ID = BASE + "SUBJECT_ID";
+        public static final String EXTRA_SUBJECT_ID = EXTRA_BASE + "EXTRA_SUBJECT_ID";
     }
 }

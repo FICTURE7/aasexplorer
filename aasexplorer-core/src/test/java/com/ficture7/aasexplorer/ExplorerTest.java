@@ -24,34 +24,34 @@ public class ExplorerTest {
 
     @Test
     public void clients_returnsNonNull() {
-        assertNotNull(explorer.clients());
+        assertNotNull(explorer.getClients());
     }
 
     @Test
     public void examinations_returnNonNull() {
-        assertNotNull(explorer.examinations());
+        assertNotNull(explorer.getExaminations());
     }
 
     @Test
     public void alevel_notFound_returnsNull() {
-        assertNull(explorer.alevel());
+        assertNull(explorer.getALevel());
     }
 
     @Test
     public void alevel_found_returnsInstance() throws ExplorerBuilderException {
-        //explorer.examinations().add(ALevelExamination.class);
+        //explorer.getExaminations().add(ALevelExamination.class);
         explorer = new ExplorerBuilder()
                 .useStore(MockStore.class)
                 .withExamination(ALevelExamination.class)
                 .build();
 
-        assertNotNull(explorer.alevel());
-        assertSame(ALevelExamination.class, explorer.alevel().getClass());
+        assertNotNull(explorer.getALevel());
+        assertSame(ALevelExamination.class, explorer.getALevel().getClass());
     }
 
     @Test
     public void olevel_notFound_returnsNull() {
-        assertNull(explorer.olevel());
+        assertNull(explorer.getOLevel());
     }
 
     @Test
@@ -61,7 +61,7 @@ public class ExplorerTest {
                 .withExamination(OLevelExamination.class)
                 .build();
 
-        assertNotNull(explorer.olevel());
-        assertSame(OLevelExamination.class, explorer.olevel().getClass());
+        assertNotNull(explorer.getOLevel());
+        assertSame(OLevelExamination.class, explorer.getOLevel().getClass());
     }
 }

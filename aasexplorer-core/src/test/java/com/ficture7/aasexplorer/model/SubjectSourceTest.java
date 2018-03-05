@@ -39,7 +39,7 @@ public class SubjectSourceTest {
         URI uri = URI.create("http://test.com/");
         SubjectSource source = new SubjectSource(client, 1, "a", new Date(), uri);
 
-        assertSame(client, source.client());
+        assertSame(client, source.getClient());
     }
 
     @Test
@@ -48,7 +48,7 @@ public class SubjectSourceTest {
         URI uri = URI.create("http://test.com/");
         SubjectSource source = new SubjectSource(client, 1, "a", new Date(), uri);
 
-        assertEquals(1, source.id());
+        assertEquals(1, source.getId());
     }
 
     @Test
@@ -57,7 +57,7 @@ public class SubjectSourceTest {
         URI uri = URI.create("http://test.com/");
         SubjectSource source = new SubjectSource(client, 1, "a", new Date(), uri);
 
-        assertEquals("a", source.name());
+        assertEquals("a", source.getName());
     }
 
     @Test
@@ -66,6 +66,6 @@ public class SubjectSourceTest {
         URI uri = URI.create("http://test.com/");
         SubjectSource source = new SubjectSource(client, 1, "a", new Date(), uri);
 
-        assertEquals(uri, source.uri());
+        assertEquals(uri, source.getURI());
     }
 }

@@ -1,20 +1,22 @@
 package com.ficture7.aasexplorer.store;
 
+import com.ficture7.aasexplorer.CallbackExecutor;
 import com.ficture7.aasexplorer.Explorer;
 import com.ficture7.aasexplorer.Loader;
 import com.ficture7.aasexplorer.Saver;
 import com.ficture7.aasexplorer.client.Client;
 import com.ficture7.aasexplorer.model.Source;
 
-import static com.ficture7.aasexplorer.util.ObjectUtil.checkNotNull;
+import org.jetbrains.annotations.NotNull;
 
 /**
- * Represents a store which stores {@link Source}.
+ * Represents a getStore which stores {@link Source}.
  *
  * @author FICTURE7
  */
 public abstract class Store implements Loader, Saver {
 
+    private final CallbackExecutor executor;
     private final Explorer explorer;
 
     /**
@@ -24,21 +26,24 @@ public abstract class Store implements Loader, Saver {
      * @param explorer {@link Explorer} instance.
      * @throws NullPointerException {@code explorer} is null.
      */
-    public Store(Explorer explorer) {
-        this.explorer = checkNotNull(explorer, "explorer");
+    public Store(@NotNull Explorer explorer) {
+        this.explorer = explorer;
+        this.executor = explorer.getExecutor();
+    }
+
+    @Override
+    public CallbackExecutor getExecutor() {
+        return executor;
     }
 
     /**
      * Returns the {@link Client} instance of the specified class type which is in the {@link Explorer}.
      *
-     * @param clientClassName {@link Client} class name.
+     * @param clientClassName {@link Client} class getName.
      * @return {@link Client} instance; null if not found or class does not exists.
-     * @throws NullPointerException {@code clientClassName} is null.
      */
-    protected final Client getClient(String clientClassName) {
-        checkNotNull(clientClassName, "clientClassName");
-
-        // Try to get a Class matching the specified client class string.
+    protected final Client getClient(@NotNull String clientClassName) {
+        // Try to get a Class matching the specified getClient class string.
         Class clientClass;
         try {
             clientClass = Class.forName(clientClassName);
@@ -46,7 +51,7 @@ public abstract class Store implements Loader, Saver {
             return null;
         }
 
-        // Return the client instance from the getExplorer which maybe null if not found.
-        return explorer.clients().get(clientClass);
+        // Return the getClient instance from the explorer which maybe null if not found.
+        return explorer.getClients().get(clientClass);
     }
 }

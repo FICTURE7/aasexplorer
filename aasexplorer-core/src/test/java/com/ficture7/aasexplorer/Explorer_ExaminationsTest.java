@@ -3,6 +3,7 @@ package com.ficture7.aasexplorer;
 import com.ficture7.aasexplorer.model.examination.Examination;
 import com.ficture7.aasexplorer.store.MockStore;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,7 +22,7 @@ public class Explorer_ExaminationsTest {
                 .useStore(MockStore.class)
                 .build();
 
-        examinations = explorer.examinations();
+        examinations = explorer.getExaminations();
     }
 
     @Test(expected = NullPointerException.class)
@@ -78,6 +79,12 @@ public class Explorer_ExaminationsTest {
 
         @Override
         public String name() {
+            return "mock";
+        }
+
+        @NotNull
+        @Override
+        public String getName() {
             return "mock";
         }
     }

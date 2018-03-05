@@ -16,14 +16,14 @@ public class Navigator {
 
     public void navigateToSubject(Context context, int subjectId) {
         Intent intent = new Intent(context, SubjectActivity.class);
-        intent.putExtra(App.Intents.SUBJECT_ID, subjectId);
+        intent.putExtra(App.Intents.EXTRA_SUBJECT_ID, subjectId);
 
         context.startActivity(intent);
     }
 
     public void navigateToQuestionPapers(Context context, int subjectId) {
         Intent intent = new Intent(context, QuestionPaperListActivity.class);
-        intent.putExtra(App.Intents.SUBJECT_ID, subjectId);
+        intent.putExtra(App.Intents.EXTRA_SUBJECT_ID, subjectId);
 
         context.startActivity(intent);
     }

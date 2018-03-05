@@ -6,10 +6,10 @@ import android.app.Dialog;
 import android.app.DownloadManager;
 import android.app.ListActivity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,10 +21,10 @@ import android.widget.Toast;
 import com.ficture7.aasexplorer.App;
 import com.ficture7.aasexplorer.Explorer;
 import com.ficture7.aasexplorer.R;
-import com.ficture7.aasexplorer.client.Client;
 import com.ficture7.aasexplorer.model.QuestionPaper;
 import com.ficture7.aasexplorer.model.ResourceSource;
 import com.ficture7.aasexplorer.model.Subject;
+import com.ficture7.aasexplorer.view.activity.fragment.SearchQuestionPaperDialogFragment;
 
 import java.util.Comparator;
 
@@ -40,22 +40,66 @@ public class QuestionPaperListActivity extends ListActivity {
         adapter = new QuestionPaperAdapter(this);
 
         Intent intent = getIntent();
-        int id = intent.getIntExtra(App.Intents.SUBJECT_ID, -1);
+        int id = intent.getIntExtra(App.Intents.EXTRA_SUBJECT_ID, -1);
         if (id != -1) {
             Explorer explorer = App.getInstance().getExplorer();
-            subject = explorer.alevel().subjects().get(id);
+            subject = explorer.getALevel().getSubjects().get(id);
         }
 
         ActionBar actionBar = getActionBar();
         if (actionBar != null) {
-            actionBar.setSubtitle(String.valueOf(subject.id()));
+            actionBar.setSubtitle(String.valueOf(subject.getId()));
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
         setContentView(R.layout.activity_question_papers);
         setListAdapter(adapter);
 
-        for (QuestionPaper qp : subject.resources().questionPapers()) {
+        updateList(subject.getResources().getQuestionPapers());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_question_papers, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+        QuestionPaper qp = adapter.getItem(position);
+        if (qp != null) {
+            /*
+                If we have more than 1 source for the same resource we
+                give the user the option of choosing where to download it.
+                Otherwise we download it from the first source.
+             */
+            if (qp.getSources().size() > 1) {
+                createDownloadDialog(qp).show();
+            } else {
+                download(qp.getSources().iterator().next());
+            }
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+
+            case R.id.menu_search:
+                SearchQuestionPaperDialogFragment.newInstance(subject.getId()).show(getFragmentManager(), null);
+                return false;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void updateList(Iterable<QuestionPaper> questionPapers) {
+        adapter.clear();
+        for (QuestionPaper qp : questionPapers) {
             adapter.add(qp);
         }
 
@@ -68,7 +112,7 @@ public class QuestionPaperListActivity extends ListActivity {
 
             private int sum(QuestionPaper qp) {
                 int season = 0;
-                switch (qp.session().season()) {
+                switch (qp.getSession().getSeason()) {
                     case SUMMER:
                         season = 1;
                         break;
@@ -77,77 +121,43 @@ public class QuestionPaperListActivity extends ListActivity {
                         break;
                 }
 
-                int number = qp.number();
+                int number = qp.getNumber();
                 if (number < 10) {
                     number = number * 10;
                 }
 
-                return (qp.session().year() * 1000) + (season * 100) + number;
+                return (qp.getSession().getYear() * 1000) + (season * 100) + number;
             }
         });
     }
 
-    @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
-        QuestionPaper qp = adapter.getItem(position);
-        if (qp != null) {
-            /*
-                If we have more than 1 source for the same resource we
-                give the user the option of choosing where to download it.
-                Otherwise we download it from the first source.
-             */
-            if (qp.sources().size() > 1) {
-                createDownloadDialog(qp).show();
-            } else {
-                download(qp.sources().iterator().next());
-            }
-        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
     private Dialog createDownloadDialog(QuestionPaper questionPaper) {
-        final ResourceSource[] sources = new ResourceSource[questionPaper.sources().size()];
-        String[] clientNames = new String[questionPaper.sources().size()];
+        final ResourceSource[] sources = new ResourceSource[questionPaper.getSources().size()];
+        String[] clientNames = new String[questionPaper.getSources().size()];
         int index = 0;
-        for (ResourceSource source : questionPaper.sources()) {
+        for (ResourceSource source : questionPaper.getSources()) {
             sources[index] = source;
-            clientNames[index] = source.client().name();
+            clientNames[index] = source.getClient().getName();
             index++;
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Download")
-               .setItems(clientNames, new DialogInterface.OnClickListener() {
-                   @Override
-                   public void onClick(DialogInterface dialogInterface, int which) {
-                       download(sources[which]);
-                   }
-               });
+               .setItems(clientNames, (dialogInterface, which) -> download(sources[which]));
         return builder.create();
     }
 
     private void download(ResourceSource source) {
-        Uri uri = Uri.parse(source.uri().toString());
+        Uri uri = Uri.parse(source.getURI().toString());
         DownloadManager.Request request = new DownloadManager.Request(uri);
-        request.setTitle(source.name());
+        request.setTitle(source.getName());
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        request.setDescription("Downloading resource from " + source.client().name());
+        request.setDescription("Downloading resource from " + source.getClient().getName());
 
         DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
         manager.enqueue(request);
 
-        Toast.makeText(QuestionPaperListActivity.this, "Downloading " + source.name() + "...", Toast.LENGTH_LONG).show();
+        Toast.makeText(QuestionPaperListActivity.this, "Downloading " + source.getName() + "...", Toast.LENGTH_LONG).show();
     }
 
     public class QuestionPaperAdapter extends ArrayAdapter<QuestionPaper> {
@@ -174,9 +184,9 @@ public class QuestionPaperListActivity extends ListActivity {
 
             QuestionPaper questionPaper = getItem(position);
             if (questionPaper != null) {
-                String name = "Paper " + questionPaper.number();
+                String name = "Paper " + questionPaper.getNumber();
                 String season = "Unk";
-                switch (questionPaper.session().season()) {
+                switch (questionPaper.getSession().getSeason()) {
                     case SUMMER:
                         season = "May/June";
                         break;
@@ -184,7 +194,7 @@ public class QuestionPaperListActivity extends ListActivity {
                         season = "Nov/Oct";
                         break;
                 }
-                String year = String.valueOf(questionPaper.session().year());
+                String year = String.valueOf(questionPaper.getSession().getYear());
 
                 holder.nameLbl.setText(name);
                 holder.seasonLbl.setText(season);

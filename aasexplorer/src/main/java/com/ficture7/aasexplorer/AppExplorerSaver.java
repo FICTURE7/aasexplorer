@@ -40,7 +40,7 @@ public class AppExplorerSaver extends ExplorerSaver {
         @Override
         protected Void doInBackground(Void... args) {
             try {
-                explorer().alevel().subjects().save();
+                explorer().getALevel().getSubjects().save();
             } catch (Exception e) {
                 return null;
             }

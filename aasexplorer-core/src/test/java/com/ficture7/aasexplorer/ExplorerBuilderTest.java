@@ -9,6 +9,7 @@ import com.ficture7.aasexplorer.model.SubjectSource;
 import com.ficture7.aasexplorer.model.examination.Examination;
 import com.ficture7.aasexplorer.store.Store;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -47,8 +48,8 @@ public class ExplorerBuilderTest {
         builder.withExamination(MockExamination.class);
         Explorer explorer = builder.build();
 
-        assertEquals(1, explorer.examinations().size());
-        assertNotNull(explorer.examinations().get(MockExamination.class));
+        assertEquals(1, explorer.getExaminations().size());
+        assertNotNull(explorer.getExaminations().get(MockExamination.class));
     }
 
     @Test(expected = ExplorerBuilderException.class)
@@ -72,8 +73,8 @@ public class ExplorerBuilderTest {
         builder.withClient(MockClient.class);
         Explorer explorer = builder.build();
 
-        assertEquals(1, explorer.clients().size());
-        assertNotNull(explorer.clients().get(MockClient.class));
+        assertEquals(1, explorer.getClients().size());
+        assertNotNull(explorer.getClients().get(MockClient.class));
     }
 
     @Test(expected = ExplorerBuilderException.class)
@@ -102,7 +103,7 @@ public class ExplorerBuilderTest {
     public void useStore__success__store_set() throws ExplorerBuilderException {
         Explorer explorer = builder.useStore(MockStore.class).build();
 
-        assertNotNull(explorer.store());
+        assertNotNull(explorer.getStore());
     }
 
     @Test
@@ -120,7 +121,7 @@ public class ExplorerBuilderTest {
         builder.useStore(MockStore.class, initializer);
 
         Explorer explorer = builder.build();
-        MockStore store = (MockStore) explorer.store();
+        MockStore store = (MockStore) explorer.getStore();
 
 
         assertEquals("updatedValue", store.test);
@@ -194,6 +195,11 @@ public class ExplorerBuilderTest {
         }
 
         @Override
+        public String getName() {
+            return null;
+        }
+
+        @Override
         public <T extends Examination> Iterable<SubjectSource> getSubjects(Class<T> examinationClass) throws ParseException, DownloadException {
             return null;
         }
@@ -208,6 +214,11 @@ public class ExplorerBuilderTest {
 
         public MockClient() {
 
+        }
+
+        @Override
+        public String getName() {
+            return null;
         }
 
         @Override
@@ -233,6 +244,12 @@ public class ExplorerBuilderTest {
         public String name() {
             return "mock which causes a error when Examinations tries to create a new instance.";
         }
+
+        @NotNull
+        @Override
+        public String getName() {
+            return "mock which causes a error when Examinations tries to create a new instance.";
+        }
     }
 
     private static class MockExamination extends Examination {
@@ -242,6 +259,12 @@ public class ExplorerBuilderTest {
 
         @Override
         public String name() {
+            return "mock";
+        }
+
+        @NotNull
+        @Override
+        public String getName() {
             return "mock";
         }
     }

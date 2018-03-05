@@ -31,7 +31,7 @@ public class AppExplorerLoader extends ExplorerLoader {
     private Status status;
     private LoaderView loaderView;
 
-    //TODO: Add ability to force load from clients.
+    //TODO: Add ability to force load from getClients.
 
     public AppExplorerLoader(Explorer explorer) {
         super(explorer);
@@ -99,11 +99,11 @@ public class AppExplorerLoader extends ExplorerLoader {
 
         Iterator<SubjectSource> iterator = sources.iterator();
         boolean empty = !iterator.hasNext();
-        if (empty || hasExpired(iterator.next().date())) {
+        if (empty || hasExpired(iterator.next().getDate())) {
             Log.i(TAG, "loadSubjectsFromStore data was null or has expired -> falling back on loadSubjectsFromClients");
             updateLoaderView(Status.LOADING_SUBJECTS_FROM_CLIENTS, null);
 
-            // Try to load from the internet if the sources are empty for some reason or
+            // Try to load from the internet if the getSources are empty for some reason or
             // if stored data is considered expired.
             try {
                 sources = loadSubjectsFromClients(examinationClass);
@@ -134,7 +134,7 @@ public class AppExplorerLoader extends ExplorerLoader {
 
         Iterator<ResourceSource> iterator = sources.iterator();
         boolean empty = !iterator.hasNext();
-        if (empty || hasExpired(iterator.next().date())) {
+        if (empty || hasExpired(iterator.next().getDate())) {
             Log.i(TAG, "loadResourcesFromStore data was null or empty -> falling back on loadResourcesFromClients");
             updateLoaderView(Status.LOADING_RESOURCES_FROM_CLIENTS, null);
 
@@ -153,7 +153,7 @@ public class AppExplorerLoader extends ExplorerLoader {
     protected <T extends Examination> Iterable<SubjectSource> loadSubjectsFromClients(Class<T> examinationClass) throws ParseException, DownloadException {
         Iterable<SubjectSource> sources = super.loadSubjectsFromClients(examinationClass);
 
-        // If auto-save is enabled we starting saving the newly retrieved sources.
+        // If auto-save is enabled we starting saving the newly retrieved getSources.
         if (sources != null && getAutoSave()) {
             App.getInstance().getSaver().getSaveSubjectsAsyncTask().execute();
         }
@@ -164,7 +164,7 @@ public class AppExplorerLoader extends ExplorerLoader {
     protected Iterable<ResourceSource> loadResourcesFromClients(Subject subject) throws ParseException, DownloadException {
         Iterable<ResourceSource> sources = super.loadResourcesFromClients(subject);
 
-        // If auto-save is enabled we starting saving the newly retrieved sources.
+        // If auto-save is enabled we starting saving the newly retrieved getSources.
         if (sources != null && getAutoSave()) {
             App.getInstance().getSaver().getSaveResourcesAsyncTask(subject).execute();
         }
@@ -201,7 +201,7 @@ public class AppExplorerLoader extends ExplorerLoader {
         @Override
         protected Void doInBackground(Void... args) {
             try {
-                getExplorer().alevel().subjects().load();
+                explorer().getALevel().getSubjects().load();
             } catch (Exception e) {
                 exception = e;
             }
@@ -244,7 +244,7 @@ public class AppExplorerLoader extends ExplorerLoader {
         @Override
         protected Void doInBackground(Void... args) {
             try {
-                subject.resources().load();
+                subject.getResources().load();
             } catch (Exception e) {
                 exception = e;
             }
@@ -288,13 +288,13 @@ public class AppExplorerLoader extends ExplorerLoader {
 
                 switch (getStatus()) {
                     case LOADING_SUBJECTS_FROM_STORE:
-                        message += " when loading subjects from local store";
+                        message += " when loading subjects from local getStore";
                         break;
                     case LOADING_SUBJECTS_FROM_CLIENTS:
                         message += " when loading subjects from internet";
                         break;
                     case LOADING_RESOURCES_FROM_STORE:
-                        message += " when loading resources from local store";
+                        message += " when loading resources from local getStore";
                         break;
                     case LOADING_RESOURCES_FROM_CLIENTS:
                         message += " when loading resources from internet";

@@ -45,6 +45,11 @@ public class HttpClientTest {
 
     private static class MockHttpClient extends HttpClient {
         @Override
+        public String getName() {
+            return null;
+        }
+
+        @Override
         public <T extends Examination> Iterable<SubjectSource> getSubjects(Class<T> examinationClass) throws ParseException, DownloadException {
             return null;
         }

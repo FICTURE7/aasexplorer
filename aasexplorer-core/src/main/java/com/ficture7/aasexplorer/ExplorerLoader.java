@@ -14,6 +14,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Executor;
 
 import static com.ficture7.aasexplorer.util.ObjectUtil.checkNotNull;
 
@@ -44,16 +45,26 @@ public class ExplorerLoader implements Loader {
     }
 
     /**
+     * Returns the {@link Executor} which will be used for async operations.
+     *
+     * @return {@link Executor} which will be used for async operations.
+     */
+    @Override
+    public CallbackExecutor getExecutor() {
+        return explorer.getExecutor();
+    }
+
+    /**
      * Returns the {@link Explorer} instance which owns the {@link ExplorerLoader}.
      *
      * @return {@link Explorer} instance which owns the {@link ExplorerLoader}.
      */
-    protected Explorer getExplorer() {
+    protected Explorer explorer() {
         return explorer;
     }
 
     /**
-     * Returns the number of days before stored data is considered expired.
+     * Returns the getNumber of days before stored data is considered expired.
      *
      * @return Number of days before stored data is considered expired.
      */
@@ -62,7 +73,7 @@ public class ExplorerLoader implements Loader {
     }
 
     /**
-     * Sets the number of days before stored data is considered expired.
+     * Sets the getNumber of days before stored data is considered expired.
      *
      * @param days Number of days before data is considered expired.
      */
@@ -92,9 +103,9 @@ public class ExplorerLoader implements Loader {
 
         Iterator<SubjectSource> iterator = sources.iterator();
         if (!iterator.hasNext()) {
-            // Load from the internet if the sources are empty for some reason.
+            // Load from the internet if the getSources are empty for some reason.
             sources = loadSubjectsFromClients(examinationClass);
-        } else if (hasExpired(iterator.next().date())) {
+        } else if (hasExpired(iterator.next().getDate())) {
             // Load from the internet if the stored data is considered expired.
             sources = loadSubjectsFromClients(examinationClass);
         }
@@ -133,10 +144,10 @@ public class ExplorerLoader implements Loader {
      * @throws DownloadException Error while downloading data.
      */
     protected <T extends Examination> Iterable<SubjectSource> loadSubjectsFromClients(Class<T> examinationClass) throws ParseException, DownloadException {
-        // Merge the result from the different clients into a single iterable.
+        // Merge the result from the different getClients into a single iterable.
         List<SubjectSource> sources = new ArrayList<>(64);
 
-        for (Client client : getExplorer().clients()) {
+        for (Client client : explorer().getClients()) {
             Iterable<SubjectSource> subjectSources = client.getSubjects(examinationClass);
 
             // Client does not support the examination kind.
@@ -162,7 +173,7 @@ public class ExplorerLoader implements Loader {
      * @throws Exception Exception when loading the {@link SubjectSource}s.
      */
     protected <T extends Examination> Iterable<SubjectSource> loadSubjectsFromStore(Class<T> examinationClass) throws Exception {
-        return getExplorer().store().loadSubjects(examinationClass);
+        return explorer().getStore().loadSubjects(examinationClass);
     }
 
     /**
@@ -174,14 +185,14 @@ public class ExplorerLoader implements Loader {
      * @throws DownloadException Error while downloading data.
      */
     protected Iterable<ResourceSource> loadResourcesFromClients(Subject subject) throws ParseException, DownloadException {
-        // Merge the result from the different clients into a single iterable.
+        // Merge the result from the different getClients into a single iterable.
         List<ResourceSource> sources = new ArrayList<>(64);
         Iterable<SubjectSource> subjectSources = subject.sources();
 
-        // Iterate through the list of sources we have, then get the resource sources
+        // Iterate through the list of getSources we have, then get the resource getSources
         // from the corresponding provider.
         for (SubjectSource subjectSource : subjectSources) {
-            Iterable<ResourceSource> resourceSources = subjectSource.client().getResources(subjectSource);
+            Iterable<ResourceSource> resourceSources = subjectSource.getClient().getResources(subjectSource);
 
             // Client does not support the examination kind.
             if (resourceSources == null) {
@@ -206,7 +217,7 @@ public class ExplorerLoader implements Loader {
      */
     protected Iterable<ResourceSource> loadResourcesFromStore(Subject subject) throws Exception {
         Iterator<ResourceSource> iterator;
-        Iterable<ResourceSource> sources = getExplorer().store().loadResources(subject);
+        Iterable<ResourceSource> sources = explorer().getStore().loadResources(subject);
         if (sources == null) {
             return null;
         }
@@ -217,8 +228,8 @@ public class ExplorerLoader implements Loader {
         }
 
         // Check if the first source is expired, if it
-        // is, we return null to indicate we want to load from the clients.
-        if (hasExpired(iterator.next().date())) {
+        // is, we return null to indicate we want to load from the getClients.
+        if (hasExpired(iterator.next().getDate())) {
             return null;
         }
 

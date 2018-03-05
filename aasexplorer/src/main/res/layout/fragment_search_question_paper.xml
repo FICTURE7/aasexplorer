@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="3sp">
+
+    <RelativeLayout
+        android:id="@+id/date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/text_title_date"
+            android:layout_width="65sp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:paddingLeft="8sp"
+            android:paddingRight="8sp"
+            android:text="Date"
+            android:textSize="18sp"/>
+
+        <Spinner
+            android:id="@+id/spinner_year"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/text_title_date"/>
+
+        <Spinner
+            android:id="@+id/spinner_season"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/spinner_year"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/date">
+
+        <TextView
+            android:id="@+id/text_title_paper"
+            android:layout_width="65sp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:paddingLeft="8sp"
+            android:paddingRight="8sp"
+            android:text="Paper"
+            android:textSize="18sp"/>
+
+        <Spinner
+            android:id="@+id/spinner_paper_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/text_title_paper"/>
+
+        <Spinner
+            android:id="@+id/spinner_paper_variant"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/spinner_paper_number"/>
+    </RelativeLayout>
+
+</RelativeLayout>

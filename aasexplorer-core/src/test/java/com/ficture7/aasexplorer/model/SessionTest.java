@@ -14,13 +14,13 @@ public class SessionTest {
     @Test
     public void season_returnsSeason() {
         Session session = new Session(Session.Season.SUMMER, 2017);
-        assertEquals(Session.Season.SUMMER, session.season());
+        assertEquals(Session.Season.SUMMER, session.getSeason());
     }
 
     @Test
     public void year_returnsYear() {
         Session session = new Session(Session.Season.SUMMER, 2017);
-        assertEquals(2017, session.year());
+        assertEquals(2017, session.getYear());
     }
 
     @Test(expected = NullPointerException.class)
@@ -41,22 +41,22 @@ public class SessionTest {
     @Test
     public void parse_winterSeason_returnsWinter_returnsYear() {
         Session session = Session.parse("w07");
-        assertEquals(Session.Season.WINTER, session.season());
-        assertEquals(2007, session.year());
+        assertEquals(Session.Season.WINTER, session.getSeason());
+        assertEquals(2007, session.getYear());
     }
 
     @Test
     public void parse_summerSeason_returnsSummer_returnsYear() {
         Session session = Session.parse("s11");
-        assertEquals(Session.Season.SUMMER, session.season());
-        assertEquals(2011, session.year());
+        assertEquals(Session.Season.SUMMER, session.getSeason());
+        assertEquals(2011, session.getYear());
     }
 
     @Test
     public void parse_unknownSeason_returnsUnknown_returnsYear() {
         Session session = Session.parse("x17");
-        assertEquals(Session.Season.UNKNOWN, session.season());
-        assertEquals(2017, session.year());
+        assertEquals(Session.Season.UNKNOWN, session.getSeason());
+        assertEquals(2017, session.getYear());
     }
 
     @Test(expected = NumberFormatException.class)

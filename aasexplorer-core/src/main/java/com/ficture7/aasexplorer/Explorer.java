@@ -6,6 +6,8 @@ import com.ficture7.aasexplorer.model.examination.Examination;
 import com.ficture7.aasexplorer.model.examination.OLevelExamination;
 import com.ficture7.aasexplorer.store.Store;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -13,7 +15,7 @@ import java.util.Map;
 import static com.ficture7.aasexplorer.util.ObjectUtil.checkNotNull;
 
 /**
- * Represents the core getExplorer and provides context for stuff to work.
+ * Represents the core explorer and provides context for stuff to work.
  *
  * @author FICTURE7
  */
@@ -27,10 +29,11 @@ public class Explorer {
     // Store which will save and load data.
     final Store store;
 
+    private final CallbackExecutor executor;
     //TODO: Add some form of priority list.
-    // Collection of clients to use.
+    // Collection of getClients to use.
     private final Clients clients;
-    // Collection of examinations.
+    // Collection of getExaminations.
     private final Examinations examinations;
 
     /**
@@ -49,13 +52,15 @@ public class Explorer {
 
         // Avoid creating duplicated instances of the same arrays.
         // Constructor signature.
-        Class<?>[] ctorExplorerClass = new Class<?>[]{Explorer.class};
+        Class<?>[] ctorExplorerClass = new Class<?>[] {Explorer.class};
         // Constructor parameters.
-        Object[] ctorExplorerParam = new Object[]{this};
+        Object[] ctorExplorerParam = new Object[] {this};
 
         loader = builder.loaderClass.newInstance(ctorExplorerClass, ctorExplorerParam);
         saver = builder.saverClass.newInstance(ctorExplorerClass, ctorExplorerParam);
         store = builder.storeClass.newInstance(ctorExplorerClass, ctorExplorerParam);
+
+        executor = builder.executorClass.newInstance(new Class[] {}, new Object[] {});
 
         for (ExplorerBuilder.ClassWithInitializer<? extends Client> clientClass : builder.clientClasses) {
             Client client = clientClass.newInstance(null, null);
@@ -64,9 +69,9 @@ public class Explorer {
 
         // Avoid creating duplicated instances of the same arrays.
         // Constructor signature.
-        Class<?>[] ctorLoaderSaverClass = new Class<?>[]{Loader.class, Saver.class};
+        Class<?>[] ctorLoaderSaverClass = new Class<?>[] {Loader.class, Saver.class};
         // Constructor parameters.
-        Object[] ctorLoaderSaverParam = new Object[]{loader, saver};
+        Object[] ctorLoaderSaverParam = new Object[] {loader, saver};
 
         for (ExplorerBuilder.ClassWithInitializer<? extends Examination> examinationClass : builder.examinationClasses) {
             Examination examination = examinationClass.newInstance(ctorLoaderSaverClass, ctorLoaderSaverParam);
@@ -75,11 +80,21 @@ public class Explorer {
     }
 
     /**
+     * Returns the {@link CallbackExecutor} which will be used for async operations.
+     *
+     * @return {@link CallbackExecutor} which will be used for async operations.
+     */
+    public CallbackExecutor getExecutor() {
+        return executor;
+    }
+
+    /**
      * Returns the {@link ExplorerLoader} of the {@link Explorer}.
      *
      * @return {@link ExplorerLoader} of the {@link Explorer}.
      */
-    public ExplorerLoader loader() {
+    @NotNull
+    public ExplorerLoader getLoader() {
         return loader;
     }
 
@@ -88,7 +103,8 @@ public class Explorer {
      *
      * @return {@link ExplorerSaver} of the {@link Explorer}.
      */
-    public ExplorerSaver saver() {
+    @NotNull
+    public ExplorerSaver getSaver() {
         return saver;
     }
 
@@ -97,7 +113,8 @@ public class Explorer {
      *
      * @return {@link Store} instance of the {@link Explorer}.
      */
-    public Store store() {
+    @NotNull
+    public Store getStore() {
         return store;
     }
 
@@ -106,7 +123,8 @@ public class Explorer {
      *
      * @return List of {@link Client}s.
      */
-    public Clients clients() {
+    @NotNull
+    public Clients getClients() {
         return clients;
     }
 
@@ -115,25 +133,26 @@ public class Explorer {
      *
      * @return List of {@link Examination}s.
      */
-    public Examinations examinations() {
+    @NotNull
+    public Examinations getExaminations() {
         return examinations;
     }
 
     /**
-     * Returns the {@link ALevelExamination} of the getExplorer; returns null if not found.
+     * Returns the {@link ALevelExamination} of the explorer; returns null if not found.
      *
-     * @return {@link ALevelExamination} of the getExplorer; returns null if not found.
+     * @return {@link ALevelExamination} of the explorer; returns null if not found.
      */
-    public ALevelExamination alevel() {
+    public ALevelExamination getALevel() {
         return examinations.get(ALevelExamination.class);
     }
 
     /**
-     * Returns the {@link OLevelExamination} of the getExplorer; returns null if not found.
+     * Returns the {@link OLevelExamination} of the explorer; returns null if not found.
      *
-     * @return {@link OLevelExamination} of the getExplorer; returns null if not found.
+     * @return {@link OLevelExamination} of the explorer; returns null if not found.
      */
-    public OLevelExamination olevel() {
+    public OLevelExamination getOLevel() {
         return examinations.get(OLevelExamination.class);
     }
 
@@ -155,7 +174,7 @@ public class Explorer {
         }
 
         /**
-         * Returns the number of {@link Examination} which are in the collection.
+         * Returns the getNumber of {@link Examination} which are in the collection.
          *
          * @return Number of {@link Examination} which are in the collection.
          */
@@ -228,7 +247,7 @@ public class Explorer {
         }
 
         /**
-         * Returns the number of {@link Client} which are in the collection.
+         * Returns the getNumber of {@link Client} which are in the collection.
          *
          * @return Number of {@link Client} which are in the collection.
          */
@@ -241,11 +260,11 @@ public class Explorer {
          *
          * @param client {@link Client} instance.
          * @param <T>    Type.
-         * @throws NullPointerException  {@code client} is null.
-         * @throws IllegalStateException Already contains a {@link Client} instance of the type of {@code client}.
+         * @throws NullPointerException  {@code getClient} is null.
+         * @throws IllegalStateException Already contains a {@link Client} instance of the type of {@code getClient}.
          */
         <T extends Client> void add(T client) {
-            checkNotNull(client, "client");
+            checkNotNull(client, "getClient");
 
             Class<? extends Client> clientClass = client.getClass();
             if (clientMap.containsKey(clientClass)) {

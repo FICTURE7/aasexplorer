@@ -41,7 +41,7 @@ public class ResourceSourceTest {
 
         ResourceSource source = new ResourceSource(client, name, date, uri);
 
-        assertEquals(name, source.name());
+        assertEquals(name, source.getName());
     }
 
     @Test
@@ -53,7 +53,7 @@ public class ResourceSourceTest {
 
         ResourceSource source = new ResourceSource(client, name, date, uri);
 
-        assertEquals(client, source.client());
+        assertEquals(client, source.getClient());
     }
 
     @Test
@@ -65,7 +65,7 @@ public class ResourceSourceTest {
 
         ResourceSource source = new ResourceSource(client, name, date, uri);
 
-        assertEquals(date, source.date());
+        assertEquals(date, source.getDate());
     }
 
     @Test
@@ -77,6 +77,6 @@ public class ResourceSourceTest {
 
         ResourceSource source = new ResourceSource(client, name, date, uri);
 
-        assertEquals(uri, source.uri());
+        assertEquals(uri, source.getURI());
     }
 }

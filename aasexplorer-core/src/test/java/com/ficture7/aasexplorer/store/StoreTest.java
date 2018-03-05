@@ -29,7 +29,7 @@ public class StoreTest {
     public void getClient__class_not_found__returnsNull() throws ExplorerBuilderException {
         Store store = new MockStore(mock(Explorer.class));
 
-        Client client = store.getClient("com.ficture7.aasexplorer.client.ClientWhichDoesNotExists");
+        Client client = store.getClient("com.ficture7.aasexplorer.getClient.ClientWhichDoesNotExists");
         assertNull(client);
     }
 
@@ -40,9 +40,9 @@ public class StoreTest {
                 .useStore(MockStore.class)
                 .build();
 
-        Store store = explorer.store();
+        Store store = explorer.getStore();
 
-        Client client = store.getClient("com.ficture7.aasexplorer.store.StoreTest$MockClient");
+        Client client = store.getClient("com.ficture7.aasexplorer.getStore.StoreTest$MockClient");
         assertNotNull(client);
         assertThat(client, IsInstanceOf.instanceOf(MockClient.class));
     }
@@ -51,6 +51,11 @@ public class StoreTest {
 
         public MockClient() {
             // Space
+        }
+
+        @Override
+        public String getName() {
+            return null;
         }
 
         @Override

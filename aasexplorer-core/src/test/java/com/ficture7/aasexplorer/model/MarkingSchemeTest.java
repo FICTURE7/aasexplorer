@@ -16,6 +16,6 @@ public class MarkingSchemeTest {
         Session session = new Session(Session.Season.SUMMER, 10);
         MarkingScheme ms = new MarkingScheme("a", session);
 
-        assertSame(session, ms.session());
+        assertSame(session, ms.getSession());
     }
 }

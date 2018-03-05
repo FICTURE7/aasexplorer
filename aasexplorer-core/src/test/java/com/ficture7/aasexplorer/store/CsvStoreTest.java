@@ -44,7 +44,7 @@ public class CsvStoreTest {
         CsvStore store = new CsvStore(mock(Explorer.class));
         store.configure("aasexplorer-core/build/resources/test/test-saving");
 
-        assertEquals("aasexplorer-core\\build\\resources\\test\\test-saving", store.root().getPath());
+        assertEquals("aasexplorer-core\\build\\resources\\test\\test-saving", store.getRoot().getPath());
     }
 
     @Test
@@ -96,17 +96,17 @@ public class CsvStoreTest {
                 .withExamination(MockExamination.class)
                 .build();
 
-        CsvStore store = (CsvStore) explorer.store();
+        CsvStore store = (CsvStore) explorer.getStore();
 
         Iterable<SubjectSource> sources = store.loadSubjects(MockExamination.class);
         assertNotNull(sources);
 
         int i = 0;
         for (SubjectSource source : sources) {
-            assertEquals(source.id(), ids[i]);
-            assertEquals(source.name(), names[i]);
-            assertEquals(source.uri().toString(), uris[i]);
-            assertSame(source.client(), explorer.clients().get(MockClient.class));
+            assertEquals(source.getId(), ids[i]);
+            assertEquals(source.getName(), names[i]);
+            assertEquals(source.getURI().toString(), uris[i]);
+            assertSame(source.getClient(), explorer.getClients().get(MockClient.class));
 
             i++;
         }
@@ -176,10 +176,10 @@ public class CsvStoreTest {
                 .withExamination(MockExamination.class)
                 .build();
 
-        CsvStore store = (CsvStore) explorer.store();
+        CsvStore store = (CsvStore) explorer.getStore();
 
         Subject subject = mock(Subject.class);
-        when(subject.examination()).thenReturn(explorer.examinations().get(MockExamination.class));
+        when(subject.examination()).thenReturn(explorer.getExaminations().get(MockExamination.class));
         when(subject.id()).thenReturn(1);
 
         Iterable<ResourceSource> sources = store.loadResources(subject);
@@ -187,9 +187,9 @@ public class CsvStoreTest {
 
         int i = 0;
         for (ResourceSource source : sources) {
-            assertEquals(names[i], source.name());
-            assertEquals(urls[i], source.uri().toString());
-            assertEquals(explorer.clients().get(MockClient.class), source.client());
+            assertEquals(names[i], source.getName());
+            assertEquals(urls[i], source.getURI().toString());
+            assertEquals(explorer.getClients().get(MockClient.class), source.getClient());
             i++;
         }
     }
@@ -207,9 +207,9 @@ public class CsvStoreTest {
                 .withExamination(MockExamination.class)
                 .build();
 
-        CsvStore store = (CsvStore) explorer.store();
+        CsvStore store = (CsvStore) explorer.getStore();
 
-        Client client = explorer.clients().get(MockClient.class);
+        Client client = explorer.getClients().get(MockClient.class);
         List<SubjectSource> subjectSources = new ArrayList<>();
 
         subjectSources.add(new SubjectSource(client, 1, "test1", new Date(), URI.create("http://mock.com/1")));
@@ -226,12 +226,12 @@ public class CsvStoreTest {
             SubjectSource expected = subjectSources.get(count);
             assertNotSame(expected, source);
 
-            assertSame(client, source.client());
-            assertEquals(expected.id(), source.id());
-            assertEquals(expected.name(), source.name());
-            assertEquals(expected.name(), source.name());
-            assertEquals(expected.date(), source.date());
-            assertEquals(expected.uri(), source.uri());
+            assertSame(client, source.getClient());
+            assertEquals(expected.getId(), source.getId());
+            assertEquals(expected.getName(), source.getName());
+            assertEquals(expected.getName(), source.getName());
+            assertEquals(expected.getDate(), source.getDate());
+            assertEquals(expected.getURI(), source.getURI());
             count++;
         }
 
@@ -253,11 +253,11 @@ public class CsvStoreTest {
 
         Subject subject = mock(Subject.class);
         when(subject.id()).thenReturn(1);
-        when(subject.examination()).thenReturn(explorer.examinations().get(MockExamination.class));
+        when(subject.examination()).thenReturn(explorer.getExaminations().get(MockExamination.class));
 
-        CsvStore store = (CsvStore) explorer.store();
+        CsvStore store = (CsvStore) explorer.getStore();
 
-        Client client = explorer.clients().get(MockClient.class);
+        Client client = explorer.getClients().get(MockClient.class);
         List<ResourceSource> resourceSources = new ArrayList<>();
 
         resourceSources.add(new ResourceSource(client, "test1", new Date(), URI.create("http://mock/test1.pdf")));
@@ -273,10 +273,10 @@ public class CsvStoreTest {
         for (ResourceSource source : loadedResourceSources) {
             ResourceSource expected = resourceSources.get(count);
 
-            assertSame(client, source.client());
-            assertEquals(expected.name(), source.name());
-            assertEquals(expected.date(), source.date());
-            assertEquals(expected.uri(), source.uri());
+            assertSame(client, source.getClient());
+            assertEquals(expected.getName(), source.getName());
+            assertEquals(expected.getDate(), source.getDate());
+            assertEquals(expected.getURI(), source.getURI());
             count++;
         }
 
@@ -287,6 +287,11 @@ public class CsvStoreTest {
 
         public MockClient() {
 
+        }
+
+        @Override
+        public String getName() {
+            return null;
         }
 
         @Override

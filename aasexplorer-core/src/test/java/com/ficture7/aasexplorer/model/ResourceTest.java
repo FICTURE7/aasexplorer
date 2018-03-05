@@ -16,13 +16,13 @@ public class ResourceTest {
     public void name_returns_initializedName() {
         Resource resource = new Resource("test.pdf");
 
-        assertEquals("test.pdf", resource.name());
+        assertEquals("test.pdf", resource.getName());
     }
 
     @Test
     public void sources_returns_nonNull() {
         Resource resource = new Resource("test.pdf");
 
-        assertNotNull(resource.sources());
+        assertNotNull(resource.getSources());
     }
 }

@@ -37,8 +37,8 @@ public class Source_ListTest {
         Source source1 = mock(Source.class);
         Source source2 = mock(Source.class);
 
-        when(source1.client()).thenReturn(mock(Client.class));
-        when(source2.client()).thenReturn(mock(Client.class));
+        when(source1.getClient()).thenReturn(mock(Client.class));
+        when(source2.getClient()).thenReturn(mock(Client.class));
 
         sources.add(source1);
         sources.add(source2);

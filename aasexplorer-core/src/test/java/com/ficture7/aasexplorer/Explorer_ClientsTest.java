@@ -25,7 +25,7 @@ public class Explorer_ClientsTest {
                 .useStore(MockStore.class)
                 .build();
 
-        clients = explorer.clients();
+        clients = explorer.getClients();
     }
 
     @Test(expected = NullPointerException.class)
@@ -104,6 +104,12 @@ public class Explorer_ClientsTest {
     }
 
     private static abstract class AbstractMockClient implements Client {
+
+        @Override
+        public String getName() {
+            return null;
+        }
+
         @Override
         public <T extends Examination> Iterable<SubjectSource> getSubjects(Class<T> examinationClass) throws ParseException, DownloadException {
             return null;

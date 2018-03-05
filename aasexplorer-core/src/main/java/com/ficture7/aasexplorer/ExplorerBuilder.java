@@ -4,6 +4,8 @@ import com.ficture7.aasexplorer.client.Client;
 import com.ficture7.aasexplorer.model.examination.Examination;
 import com.ficture7.aasexplorer.store.Store;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +21,7 @@ import static com.ficture7.aasexplorer.util.ObjectUtil.checkNotNull;
  */
 public class ExplorerBuilder {
 
+    ClassWithInitializer<? extends CallbackExecutor> executorClass;
     ClassWithInitializer<? extends ExplorerLoader> loaderClass;
     ClassWithInitializer<? extends ExplorerSaver> saverClass;
     ClassWithInitializer<? extends Store> storeClass;
@@ -77,6 +80,17 @@ public class ExplorerBuilder {
         checkNotInterface(clientClass, "clientClass");
 
         clientClasses.add(new ClassWithInitializer<>(clientClass, clientInitializer));
+        return this;
+    }
+
+    @NotNull
+    public <T extends CallbackExecutor> ExplorerBuilder useExecutor(@NotNull Class<T> executorClass) {
+        return useExecutor(executorClass, null);
+    }
+
+    @NotNull
+    public <T extends CallbackExecutor> ExplorerBuilder useExecutor(@NotNull Class<T> executorClass, Initializer<T> executorInitializer) {
+        this.executorClass = new ClassWithInitializer<>(executorClass, executorInitializer);
         return this;
     }
 
@@ -182,6 +196,11 @@ public class ExplorerBuilder {
             saverClass = new ClassWithInitializer<>(ExplorerSaver.class, null);
         }
 
+        // Fallback getExecutor to default one if not set.
+        if (executorClass == null) {
+            executorClass = new ClassWithInitializer<>(ExplorerExecutor.class, null);
+        }
+
         try {
             return new Explorer(this);
         } catch (ExplorerBuilderException e) {
@@ -197,14 +216,14 @@ public class ExplorerBuilder {
      * @param <T> Type of object.
      * @author FICTURE7
      */
-    public static abstract class Initializer<T> {
+    public interface Initializer<T> {
 
         /**
          * Called to initialize the instance.
          *
          * @param instance Store instance.
          */
-        public abstract void init(T instance);
+        void init(T instance);
     }
 
     /**

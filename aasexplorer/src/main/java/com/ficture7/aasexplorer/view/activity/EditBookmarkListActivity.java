@@ -39,7 +39,7 @@ public class EditBookmarkListActivity extends ListActivity {
         }
 
         Explorer explorer = App.getInstance().getExplorer();
-        updateList(explorer.alevel().subjects());
+        updateList(explorer.getALevel().getSubjects());
     }
 
     @Override
@@ -63,10 +63,10 @@ public class EditBookmarkListActivity extends ListActivity {
 
             private void searchAndUpdate(String query) {
                 adapter.clear();
-                Iterable<Subject> subjects = App.getInstance().getExplorer().alevel().subjects();
+                Iterable<Subject> subjects = App.getInstance().getExplorer().getALevel().getSubjects();
                 for (Subject subject : subjects) {
-                    String id = String.valueOf(subject.id());
-                    String name = subject.name().toLowerCase();
+                    String id = String.valueOf(subject.getId());
+                    String name = subject.getName().toLowerCase();
 
                     if (id.contains(query) || name.contains(query)) {
                         adapter.add(subject);

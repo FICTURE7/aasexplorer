@@ -24,7 +24,7 @@ public class SubjectTest {
         saver = mock(Saver.class);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void ctor_nameNull_exception() {
         new Subject(examination, loader, saver, 0, null);
     }

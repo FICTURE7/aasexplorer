@@ -57,14 +57,14 @@ public class BookmarkListActivity extends ListActivity {
 
         // If the SubjectRepository is already loaded, we load the data directly
         // otherwise we hook a callback to the load async task.
-        if (explorer.alevel().subjects().isLoaded()) {
-            updateList(explorer.alevel().subjects());
+        if (explorer.getALevel().getSubjects().isLoaded()) {
+            updateList(explorer.getALevel().getSubjects());
         } else {
             // Add call back to something to add the subject to the adapter.
             loader.getLoadSubjectsAsyncTask().setLoadCallback(new AppExplorerLoader.LoadCallback() {
                 @Override
                 public void onLoad() {
-                    updateList(explorer.alevel().subjects());
+                    updateList(explorer.getALevel().getSubjects());
                 }
             });
         }
@@ -74,7 +74,7 @@ public class BookmarkListActivity extends ListActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.menu_add:
-                if (App.getInstance().getExplorer().alevel().subjects().isLoaded()) {
+                if (App.getInstance().getExplorer().getALevel().getSubjects().isLoaded()) {
                     App.getInstance().getNavigator().navigateToEditBookmarks(this);
                     return true;
                 } else {
@@ -91,7 +91,7 @@ public class BookmarkListActivity extends ListActivity {
     protected void onListItemClick(ListView listView, View view, int position, long id) {
         Subject subject = adapter.getItem(position);
         if (subject != null) {
-            App.getInstance().getNavigator().navigateToSubject(this, subject.id());
+            App.getInstance().getNavigator().navigateToSubject(this, subject.getId());
         }
     }
 
@@ -129,8 +129,8 @@ public class BookmarkListActivity extends ListActivity {
 
             Subject subject = getItem(position);
             if (subject != null) {
-                holder.nameLbl.setText(subject.name());
-                holder.idLbl.setText(String.valueOf(subject.id()));
+                holder.nameLbl.setText(subject.getName());
+                holder.idLbl.setText(String.valueOf(subject.getId()));
             }
 
             return convertView;

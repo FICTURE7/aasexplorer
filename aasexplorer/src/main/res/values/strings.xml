@@ -23,4 +23,5 @@
     <string name="action_search_subjects">Search Subjects</string>
 
     <string name="hint_search">Search…</string>
+    <string name="action_search_question_papers">Search Question Papers</string>
 </resources>

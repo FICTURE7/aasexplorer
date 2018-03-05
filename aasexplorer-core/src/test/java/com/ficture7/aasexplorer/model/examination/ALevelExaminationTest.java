@@ -10,12 +10,12 @@ import static org.mockito.Mockito.mock;
 
 public class ALevelExaminationTest {
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void ctor__null_loader__throwsException() {
         new ALevelExamination(null, mock(Saver.class));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void ctor__null_saver__throwsException() {
         new ALevelExamination(mock(Loader.class), null);
     }
@@ -23,6 +23,6 @@ public class ALevelExaminationTest {
     @Test
     public void name__returnsNonNull() {
         Examination examination = new ALevelExamination(mock(Loader.class), mock(Saver.class));
-        assertNotNull(examination.name());
+        assertNotNull(examination.getName());
     }
 }
