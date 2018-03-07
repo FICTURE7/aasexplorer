@@ -19,7 +19,7 @@ public class Source_ListTest {
         sources = new Source.List<>();
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void add__null_source__throwsException() {
         sources.add(null);
     }
@@ -44,7 +44,7 @@ public class Source_ListTest {
         sources.add(source2);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void remove__null_source__throwsException() {
         sources.remove(null);
     }

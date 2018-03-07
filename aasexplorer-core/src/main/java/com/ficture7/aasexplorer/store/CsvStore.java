@@ -179,7 +179,7 @@ public class CsvStore extends Store {
             resourcesDir.mkdir();
         }
 
-        File resourcesFile = new File(resourcesDir, subject.id() + ".csv");
+        File resourcesFile = new File(resourcesDir, subject.getId() + ".csv");
         FileWriter fileWriter = new FileWriter(resourcesFile);
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
         CsvWriter csvWriter = new CsvWriter(bufferedWriter);
@@ -316,7 +316,7 @@ public class CsvStore extends Store {
             Get the .csv file which contains the resource getSources.
             Exit early if it does exists and return null.
          */
-        File resourcesFile = new File(resourcesDir, subject.id() + ".csv");
+        File resourcesFile = new File(resourcesDir, subject.getId() + ".csv");
         if (!resourcesFile.exists()) {
             return null;
         }

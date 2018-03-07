@@ -6,7 +6,7 @@ import static org.junit.Assert.assertSame;
 
 public class QuestionPaperTest {
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void ctor_sessionNull_throwsException() {
         new QuestionPaper("A", null, 1);
     }

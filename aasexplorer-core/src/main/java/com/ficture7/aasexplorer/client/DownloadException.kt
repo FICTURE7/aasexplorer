@@ -13,7 +13,7 @@ class DownloadException : Exception {
      * @param urlString URL.
      * @param cause Cause.
      */
-    internal constructor(urlString: String?, cause: Throwable) : super(
+    internal constructor(urlString: String?, cause: Throwable?) : super(
             if (urlString == null)
                 "Failed to download a resource."
             else

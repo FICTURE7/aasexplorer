@@ -151,6 +151,10 @@ class XtremePapersClient : HttpClient() {
     }
 
     companion object {
-        internal val ALEVEL_ROOT_URI = URI.create("http://papers.xtremepapers.com/CIE/Cambridge%20International%20A%20and%20AS%20Level/")
+        /**
+         * A Level root URL.
+         */
+        @JvmField
+        val ALEVEL_ROOT_URI = URI.create("http://papers.xtremepapers.com/CIE/Cambridge%20International%20A%20and%20AS%20Level/")!!
     }
 }

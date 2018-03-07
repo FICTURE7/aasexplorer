@@ -71,56 +71,6 @@ open class Subject {
     }
 
     /**
-     * Returns the subject ID/code of the [Subject].
-     *
-     * @return Subject ID/code of the [Subject].
-     */
-    @Deprecated("use getId", replaceWith = ReplaceWith("getId"))
-    fun id(): Int {
-        return id
-    }
-
-    /**
-     * Returns the getName of the [Subject].
-     *
-     * @return Name of the [Subject].
-     */
-    @Deprecated("use getName", replaceWith = ReplaceWith("getName"))
-    fun name(): String {
-        return name
-    }
-
-    /**
-     * Returns the getSources of the [Subject].
-     *
-     * @return Sources of the [Subject].
-     */
-    @Deprecated("use getSources", replaceWith = ReplaceWith("getSources"))
-    fun sources(): Source.List<SubjectSource> {
-        return sources
-    }
-
-    /**
-     * Returns the resources of the [Subject].
-     *
-     * @return Resources of the [Subject].
-     */
-    @Deprecated("use resources", replaceWith = ReplaceWith("resources"))
-    fun resources(): ResourceRepository {
-        return resources
-    }
-
-    /**
-     * Returns the [Examination] of the [Subject].
-     *
-     * @return [Examination] of the [Subject].
-     */
-    @Deprecated("use examination", replaceWith = ReplaceWith("examination"))
-    fun examination(): Examination {
-        return examination
-    }
-
-    /**
      * Returns the hash code of the [Subject] instance.
      *
      * @return Hash code of the [Subject] instance.

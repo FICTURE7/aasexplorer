@@ -6,7 +6,7 @@ import static org.junit.Assert.assertEquals;
 
 public class SessionTest {
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void ctor__season_null__throwsException() {
         new Session(null, 2017);
     }
@@ -23,7 +23,7 @@ public class SessionTest {
         assertEquals(2017, session.getYear());
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void parse_nullValue_exception() {
         Session.parse(null);
     }

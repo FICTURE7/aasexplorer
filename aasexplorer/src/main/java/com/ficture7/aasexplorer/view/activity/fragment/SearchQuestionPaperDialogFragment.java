@@ -67,18 +67,15 @@ public class SearchQuestionPaperDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
                 .setView(dialogView)
                 .setTitle("Search")
-                .setPositiveButton("Search", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        String yearString = ((Spinner)dialogView.findViewById(R.id.spinner_year)).getSelectedItem().toString();
-                        String seasonString = ((Spinner)dialogView.findViewById(R.id.spinner_season)).getSelectedItem().toString();
-                        String paperNumberString = ((Spinner)dialogView.findViewById(R.id.spinner_paper_number)).getSelectedItem().toString();
-                        String paperVariantString = ((Spinner)dialogView.findViewById(R.id.spinner_paper_variant)).getSelectedItem().toString();
+                .setPositiveButton("Search", (dialogInterface, i) -> {
+                    String yearString = ((Spinner)dialogView.findViewById(R.id.spinner_year)).getSelectedItem().toString();
+                    String seasonString = ((Spinner)dialogView.findViewById(R.id.spinner_season)).getSelectedItem().toString();
+                    String paperNumberString = ((Spinner)dialogView.findViewById(R.id.spinner_paper_number)).getSelectedItem().toString();
+                    String paperVariantString = ((Spinner)dialogView.findViewById(R.id.spinner_paper_variant)).getSelectedItem().toString();
 
-                        int year = Integer.parseInt(yearString);
-                        int paperNumber = Integer.parseInt(paperNumberString);
-                        int paperVariant = Integer.parseInt(paperVariantString);
-                    }
+                    int year = Integer.parseInt(yearString);
+                    int paperNumber = Integer.parseInt(paperNumberString);
+                    int paperVariant = Integer.parseInt(paperVariantString);
                 })
                 .setNegativeButton("Cancel", null);
 
@@ -107,7 +104,7 @@ public class SearchQuestionPaperDialogFragment extends DialogFragment {
         List<String> paperNumbers = new ArrayList<>();
         List<String> paperVariants = new ArrayList<>();
 
-        for (QuestionPaper qp : subject.resources().getQuestionPapers()) {
+        for (QuestionPaper qp : subject.getResources().getQuestionPapers()) {
             String year = String.valueOf(qp.getSession().getYear());
             if (!years.contains(year))
                 years.add(year);

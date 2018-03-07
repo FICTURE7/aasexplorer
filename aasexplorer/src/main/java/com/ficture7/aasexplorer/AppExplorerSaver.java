@@ -59,7 +59,7 @@ public class AppExplorerSaver extends ExplorerSaver {
         @Override
         protected Void doInBackground(Void... args) {
             try {
-                subject.resources().save();
+                subject.getResources().save();
             } catch (Exception e) {
                 return null;
             }

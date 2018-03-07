@@ -32,8 +32,8 @@ public class SubjectActivity extends ListActivity {
 
             ActionBar actionBar = getActionBar();
             if (actionBar != null) {
-                actionBar.setTitle(subject.name());
-                actionBar.setSubtitle(String.valueOf(subject.id()));
+                actionBar.setTitle(subject.getName());
+                actionBar.setSubtitle(String.valueOf(subject.getId()));
                 actionBar.setDisplayHomeAsUpEnabled(true);
             }
 
@@ -41,7 +41,7 @@ public class SubjectActivity extends ListActivity {
         }
 
         AppExplorerLoader loader = App.getInstance().getLoader();
-        if (!subject.resources().isLoaded()) {
+        if (!subject.getResources().isLoaded()) {
             loader.getLoadResourcesAsyncTask(subject).execute();
         }
 
@@ -60,7 +60,7 @@ public class SubjectActivity extends ListActivity {
     protected void onListItemClick(ListView l, View v, int position, long id) {
         switch(position) {
             case 0:
-                App.getInstance().getNavigator().navigateToQuestionPapers(this, subject.id());
+                App.getInstance().getNavigator().navigateToQuestionPapers(this, subject.getId());
                 break;
 
             case 1:

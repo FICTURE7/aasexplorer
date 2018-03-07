@@ -3,6 +3,7 @@ package com.ficture7.aasexplorer;
 import android.app.Application;
 
 import com.ficture7.aasexplorer.client.GceGuideClient;
+import com.ficture7.aasexplorer.client.XtremePapersClient;
 import com.ficture7.aasexplorer.model.examination.ALevelExamination;
 import com.ficture7.aasexplorer.store.CsvStore;
 

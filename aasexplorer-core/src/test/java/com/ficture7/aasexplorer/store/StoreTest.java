@@ -42,7 +42,7 @@ public class StoreTest {
 
         Store store = explorer.getStore();
 
-        Client client = store.getClient("com.ficture7.aasexplorer.getStore.StoreTest$MockClient");
+        Client client = store.getClient("com.ficture7.aasexplorer.store.StoreTest$MockClient");
         assertNotNull(client);
         assertThat(client, IsInstanceOf.instanceOf(MockClient.class));
     }

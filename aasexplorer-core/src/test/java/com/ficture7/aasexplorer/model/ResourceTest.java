@@ -7,7 +7,7 @@ import static org.junit.Assert.assertNotNull;
 
 public class ResourceTest {
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void ctor_nullName_exception() {
         new Resource(null);
     }

@@ -13,7 +13,7 @@ import static org.junit.Assert.assertNotNull;
 
 public class HttpClientTest {
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void get_nullUri_exception() throws DownloadException {
         MockHttpClient client = new MockHttpClient();
         client.get(null);

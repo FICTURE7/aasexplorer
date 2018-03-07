@@ -30,15 +30,15 @@ public class Bookmarks {
     }
 
     public void add(Subject subject) {
-        subjectIds.add(subject.id());
+        subjectIds.add(subject.getId());
     }
 
     public void remove(Subject subject) {
-        subjectIds.remove(Integer.valueOf(subject.id()));
+        subjectIds.remove(Integer.valueOf(subject.getId()));
     }
 
     public boolean contains(Subject subject) {
-        return subjectIds.contains(subject.id());
+        return subjectIds.contains(subject.getId());
     }
 
     public void save() {

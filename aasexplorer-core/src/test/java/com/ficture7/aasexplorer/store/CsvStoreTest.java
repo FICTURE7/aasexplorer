@@ -23,6 +23,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -120,7 +121,7 @@ public class CsvStoreTest {
         store.configure("does-not-exists");
 
         Subject subject = mock(Subject.class);
-        when(subject.examination()).thenReturn(mock(Examination.class));
+        when(subject.getExamination()).thenReturn(mock(Examination.class));
 
         Iterable<ResourceSource> sources = store.loadResources(subject);
 
@@ -133,7 +134,7 @@ public class CsvStoreTest {
         store.configure("aasexplorer-core/src/test/resources/test-empty");
 
         Subject subject = mock(Subject.class);
-        when(subject.examination()).thenReturn(mock(Examination.class));
+        when(subject.getExamination()).thenReturn(mock(Examination.class));
 
         Iterable<ResourceSource> sources = store.loadResources(subject);
 
@@ -166,12 +167,7 @@ public class CsvStoreTest {
         };
 
         Explorer explorer = new ExplorerBuilder()
-                .useStore(CsvStore.class, new ExplorerBuilder.Initializer<CsvStore>() {
-                    @Override
-                    public void init(CsvStore instance) {
-                        instance.configure("aasexplorer-core/src/test/resources/test-csv");
-                    }
-                })
+                .useStore(CsvStore.class, instance -> instance.configure("aasexplorer-core/src/test/resources/test-csv"))
                 .withClient(MockClient.class)
                 .withExamination(MockExamination.class)
                 .build();
@@ -179,8 +175,8 @@ public class CsvStoreTest {
         CsvStore store = (CsvStore) explorer.getStore();
 
         Subject subject = mock(Subject.class);
-        when(subject.examination()).thenReturn(explorer.getExaminations().get(MockExamination.class));
-        when(subject.id()).thenReturn(1);
+        when(subject.getExamination()).thenReturn(explorer.getExaminations().get(MockExamination.class));
+        when(subject.getId()).thenReturn(1);
 
         Iterable<ResourceSource> sources = store.loadResources(subject);
         assertNotNull(sources);
@@ -197,12 +193,7 @@ public class CsvStoreTest {
     @Test
     public void saveSubjects__saves_subjects() throws Exception {
         Explorer explorer = new ExplorerBuilder()
-                .useStore(CsvStore.class, new ExplorerBuilder.Initializer<CsvStore>() {
-                    @Override
-                    public void init(CsvStore instance) {
-                        instance.configure("aasexplorer-core/build/resources/test/test-saving");
-                    }
-                })
+                .useStore(CsvStore.class, instance -> instance.configure("aasexplorer-core/build/resources/test/test-saving"))
                 .withClient(MockClient.class)
                 .withExamination(MockExamination.class)
                 .build();
@@ -241,19 +232,14 @@ public class CsvStoreTest {
     @Test
     public void saveResources__saves_resources() throws Exception {
         Explorer explorer = new ExplorerBuilder()
-                .useStore(CsvStore.class, new ExplorerBuilder.Initializer<CsvStore>() {
-                    @Override
-                    public void init(CsvStore instance) {
-                        instance.configure("aasexplorer-core/build/resources/test/test-saving");
-                    }
-                })
+                .useStore(CsvStore.class, instance -> instance.configure("aasexplorer-core/build/resources/test/test-saving"))
                 .withClient(MockClient.class)
                 .withExamination(MockExamination.class)
                 .build();
 
         Subject subject = mock(Subject.class);
-        when(subject.id()).thenReturn(1);
-        when(subject.examination()).thenReturn(explorer.getExaminations().get(MockExamination.class));
+        when(subject.getId()).thenReturn(1);
+        when(subject.getExamination()).thenReturn(explorer.getExaminations().get(MockExamination.class));
 
         CsvStore store = (CsvStore) explorer.getStore();
 
@@ -266,8 +252,10 @@ public class CsvStoreTest {
         resourceSources.add(new ResourceSource(client, "test4", new Date(), URI.create("http://mock/test4.pdf")));
         resourceSources.add(new ResourceSource(client, "test5", new Date(), URI.create("http://mock/test5.pdf")));
 
+        // Save the resources
         store.saveResources(subject, resourceSources);
 
+        // Load the resources back to check if it saved.
         Iterable<ResourceSource> loadedResourceSources = store.loadResources(subject);
         int count = 0;
         for (ResourceSource source : loadedResourceSources) {

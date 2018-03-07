@@ -12,6 +12,7 @@ import java.net.URI;
 import java.util.Date;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
 public class XtremePapersClientTest {
 
@@ -22,7 +23,7 @@ public class XtremePapersClientTest {
         client = new XtremePapersClient();
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void getSubjects__null_examinationClass__throwsException() throws ParseException, DownloadException {
         client.getSubjects(null);
     }
@@ -42,7 +43,7 @@ public class XtremePapersClientTest {
     }
 
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void getResources__null_subjectSource__throwsException() throws ParseException, DownloadException {
         client.getResources(null);
     }
@@ -61,7 +62,7 @@ public class XtremePapersClientTest {
 
     @Test(expected = ParseException.class)
     public void parseTable__cannot_parse__throwsException() throws DownloadException, ParseException {
-        client.parse(client.get(URI.create("http://google.com/")), null);
+        client.parse(client.get(URI.create("http://google.com/")), mock(HttpClient.Processor.class));
     }
 
     @Test

@@ -187,7 +187,7 @@ public class ExplorerLoader implements Loader {
     protected Iterable<ResourceSource> loadResourcesFromClients(Subject subject) throws ParseException, DownloadException {
         // Merge the result from the different getClients into a single iterable.
         List<ResourceSource> sources = new ArrayList<>(64);
-        Iterable<SubjectSource> subjectSources = subject.sources();
+        Iterable<SubjectSource> subjectSources = subject.getSources();
 
         // Iterate through the list of getSources we have, then get the resource getSources
         // from the corresponding provider.

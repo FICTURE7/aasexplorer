@@ -131,19 +131,16 @@ public class EditBookmarkListActivity extends ListActivity {
             boolean bookmarked = App.getInstance().getBookmarks().contains(subject);
 
             if (subject != null) {
-                holder.nameLbl.setText(subject.name());
-                holder.idLbl.setText(String.valueOf(subject.id()));
+                holder.nameLbl.setText(subject.getName());
+                holder.idLbl.setText(String.valueOf(subject.getId()));
 
                 holder.bookmarkCkb.setOnCheckedChangeListener(null);
                 holder.bookmarkCkb.setChecked(bookmarked);
-                holder.bookmarkCkb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
-                        if (checked) {
-                            App.getInstance().getBookmarks().add(subject);
-                        } else {
-                            App.getInstance().getBookmarks().remove(subject);
-                        }
+                holder.bookmarkCkb.setOnCheckedChangeListener((compoundButton, checked) -> {
+                    if (checked) {
+                        App.getInstance().getBookmarks().add(subject);
+                    } else {
+                        App.getInstance().getBookmarks().remove(subject);
                     }
                 });
             }

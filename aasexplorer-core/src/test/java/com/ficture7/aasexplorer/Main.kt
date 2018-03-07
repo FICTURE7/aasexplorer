@@ -3,10 +3,12 @@ package com.ficture7.aasexplorer
 import com.ficture7.aasexplorer.client.XtremePapersClient
 import com.ficture7.aasexplorer.model.examination.ALevelExamination
 import com.ficture7.aasexplorer.store.CsvStore
+import org.junit.Ignore
 import org.junit.Test
 
 class Main {
 
+    @Ignore
     @Test
     fun sandbox() {
         val explorer = ExplorerBuilder()

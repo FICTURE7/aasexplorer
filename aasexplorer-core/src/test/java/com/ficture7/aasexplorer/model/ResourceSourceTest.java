@@ -12,22 +12,22 @@ import static org.mockito.Mockito.mock;
 
 public class ResourceSourceTest {
 
-    @Test(expected =  NullPointerException.class)
+    @Test(expected =  IllegalArgumentException.class)
     public void ctor__client_null__throwsException() {
         new ResourceSource(null, "a", new Date(), URI.create("http://test.com/"));
     }
 
-    @Test(expected =  NullPointerException.class)
+    @Test(expected =  IllegalArgumentException.class)
     public void ctor__name_null__throwsException() {
         new ResourceSource(mock(Client.class), null, new Date(), URI.create("http://test.com/"));
     }
 
-    @Test(expected =  NullPointerException.class)
+    @Test(expected =  IllegalArgumentException.class)
     public void ctor__date_null__throwsException() {
         new ResourceSource(mock(Client.class), "a", null, URI.create("http://test.com/"));
     }
 
-    @Test(expected =  NullPointerException.class)
+    @Test(expected =  IllegalArgumentException.class)
     public void ctor__uri_null__throwsException() {
         new ResourceSource(mock(Client.class), "a", new Date(), null);
     }

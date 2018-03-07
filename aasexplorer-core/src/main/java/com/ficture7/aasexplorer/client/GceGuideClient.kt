@@ -150,7 +150,16 @@ class GceGuideClient : HttpClient() {
     }
 
     companion object {
-        internal val ALEVEL_ROOT_URI = URI.create("http://papers.gceguide.xyz/A%20Levels/")
-        internal val OLEVEL_ROOT_URI = URI.create("https://papers.gceguide.xyz/O%20Levels/")
+        /**
+         * A-Level root URL.
+         */
+        @JvmField
+        val ALEVEL_ROOT_URI = URI.create("http://papers.gceguide.xyz/A%20Levels/")!!
+
+        /**
+         * O-Level root URL.
+         */
+        @JvmField
+        val OLEVEL_ROOT_URI = URI.create("https://papers.gceguide.xyz/O%20Levels/")!!
     }
 }

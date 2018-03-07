@@ -26,7 +26,7 @@ public class GceGuideClientTest {
         client = new GceGuideClient();
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void getSubjects__null_examinationClass__throwsException() throws ParseException, DownloadException {
         client.getSubjects(null);
     }
@@ -52,7 +52,7 @@ public class GceGuideClientTest {
         assertNull(sources);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void getResources__null_subjectSource__throwsException() throws ParseException, DownloadException {
         client.getResources(null);
     }
@@ -71,7 +71,7 @@ public class GceGuideClientTest {
 
     @Test(expected = ParseException.class)
     public void parseTable__cannot_parse__throwsException() throws DownloadException, ParseException {
-        client.parse(client.get(URI.create("http://google.com/")), null);
+        client.parse(client.get(URI.create("http://google.com/")), mock(HttpClient.Processor.class));
     }
 
     @Test

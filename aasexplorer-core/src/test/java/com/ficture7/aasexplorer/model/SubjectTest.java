@@ -32,25 +32,25 @@ public class SubjectTest {
     @Test
     public void id_returnsInitiated_id() {
         Subject subject = new Subject(examination, loader, saver, 1, "a'");
-        assertEquals(1, subject.id());
+        assertEquals(1, subject.getId());
     }
 
     @Test
     public void name_returnsInitiated_name() {
         Subject subject = new Subject(examination, loader, saver, 1, "a");
-        assertEquals("a", subject.name());
+        assertEquals("a", subject.getName());
     }
 
     @Test
     public void sources_returnsNonNull() {
         Subject subject = new Subject(examination, loader, saver, 1, "a");
-        assertNotNull(subject.sources());
+        assertNotNull(subject.getSources());
     }
 
     @Test
     public void resources_returnsNonNull() {
         Subject subject = new Subject(examination, loader, saver, 1, "a");
-        assertNotNull(subject.resources());
+        assertNotNull(subject.getResources());
     }
 
     @Test
@@ -58,7 +58,7 @@ public class SubjectTest {
         Subject subject = new Subject(examination, loader, saver, 1, "a");
 
         assertEquals(1, subject.hashCode());
-        assertEquals(subject.id(), subject.hashCode());
+        assertEquals(subject.getId(), subject.hashCode());
     }
 
     @Test

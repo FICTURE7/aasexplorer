@@ -13,22 +13,22 @@ import static org.mockito.Mockito.mock;
 
 public class SubjectSourceTest {
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void ctor__null_client__throwsException() {
         new SubjectSource(null, 1, "a", new Date(), URI.create("http://test.com/"));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void ctor__null_name__throwsException() {
         new SubjectSource(mock(Client.class), 1, null, new Date(), URI.create("http://test.com/"));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void ctor__null_uri__throwsException() {
         new SubjectSource(mock(Client.class), 1, "a", new Date(), null);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void ctor__null_date__throwsException() {
         new SubjectSource(mock(Client.class), 1, "a", null, URI.create("http://test.com/"));
     }
